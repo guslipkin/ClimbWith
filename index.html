@@ -96,19 +96,19 @@
             <div class="card-header"><h3 class="card-title">Climbing</h3></div>
             <div class="card-body">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="has_boulder">
+                <input class="form-check-input" type="checkbox" id="has_climbing_boulder">
                 <label class="form-check-label"> Bouldering</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="has_toprope">
+                <input class="form-check-input" type="checkbox" id="has_climbing_toprope">
                 <label class="form-check-label"> Top Rope</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="has_lead">
+                <input class="form-check-input" type="checkbox" id="has_climbing_lead">
                 <label class="form-check-label"> Lead</label>
               </div>
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="has_autobelay">
+                <input class="form-check-input" type="checkbox" id="has_climbing_autobelay">
                 <label class="form-check-label"> Auto Belay</label>
               </div>
             </div>
@@ -149,27 +149,50 @@
                     <div class="row">
                       <div class="col">
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="board_kilter_7x10">
+                          <input class="form-check-input" type="checkbox" id="has_board_kilter_7x10">
                           <label class="form-check-label"> 7x10 (Home)</label>
                         </div>
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="board_kilter_12x12">
+                          <input class="form-check-input" type="checkbox" id="has_board_kilter_12x12">
                           <label class="form-check-label"> 12x12</label>
                         </div>
                       </div>
                       <div class="col">
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="board_kilter_8x12">
+                          <input class="form-check-input" type="checkbox" id="has_board_kilter_8x12">
                           <label class="form-check-label"> 8x12</label>
                         </div>
                         <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="board_kilter_16x12">
+                          <input class="form-check-input" type="checkbox" id="has_board_kilter_16x12">
                           <label class="form-check-label"> 16x12</label>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card card-info">
+            <div class="card-header"><h3 class="card-title">Fitness</h3></div>
+            <div class="card-body">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="has_fitness_yoga">
+                <label class="form-check-label"> Yoga</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="has_fitness_freeweights">
+                <label class="form-check-label"> Free Weights</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="has_fitness_benches">
+                <label class="form-check-label"> Weight Benches</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="has_fitness_cardio">
+                <label class="form-check-label"> Cardio Machines</label>
               </div>
             </div>
           </div>
@@ -198,10 +221,5 @@
 
 </div></div></div>
 <script src="gym_explorer.js"></script>
-<script>
-  $( '#select-field' ).select2( {
-    theme: 'bootstrap-5'
-} );
-</script>
 </body>
 </html>

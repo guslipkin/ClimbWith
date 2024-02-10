@@ -32,7 +32,7 @@ function drawMap(selectedGyms) {
 function filterCheckbox(e) {
     var id = e.target.id.substring(4);
     var boxes = [...checkboxes];
-    var regexFeatures = new RegExp('^(has_|board_)(.*)');
+    var regexFeatures = new RegExp('^(has_)(climbing|board|fitness)(_)(.*)');
     var regexBoards = new RegExp('^(position_)(.*)');
     var boxTable = 
         aq.table({
@@ -43,7 +43,7 @@ function filterCheckbox(e) {
         boxTable
         .filter(aq.escape(d => d.criteria.match(regexFeatures)))
         .derive({ 
-            criteria: aq.escape(d => regexFeatures.exec(d.criteria)[2]),
+            criteria: aq.escape(d => regexFeatures.exec(d.criteria)[4]),
             value: d => open.sum(d.value) == 0 ? false : d.value
         })
         .filter(d => d.value)
@@ -55,9 +55,7 @@ function filterCheckbox(e) {
             criteria: aq.escape(d => regexBoards.exec(d.criteria)[2]),
             value: d => open.sum(d.value) == 0 ? false : d.value
         })
-        .filter(d => d.value)
-        .print();
-    boardPositions.join(getGymBoard()).print();
+        .filter(d => d.value);
     selectedGyms = features.numRows() > 0 ? features.join(gymData) : gymData;
     drawMap(selectedGyms);
     addGymsToTable(selectedGyms);
