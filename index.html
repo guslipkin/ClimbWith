@@ -116,66 +116,6 @@
         </div>
         <div class="col">
           <div class="card card-info">
-            <div class="card-header"><h3 class="card-title">Training Boards</h3></div>
-            <div class="card-body">
-              <div class="card">
-                <div class="card-header"><h4 class="card-title">Board Position</h4></div>
-                <div class="card-body">
-                  <div class="container row">
-                    <div class="col">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="position_fixed">
-                        <label class="form-check-label"> Fixed</label>
-                      </div>
-                    </div>
-                    <div class="col">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="position_adjustable">
-                        <label class="form-check-label"> Adjustable</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="card collapsed-card">
-                <div class="card-header">
-                    <h4 class="card-title">Kilter</h4>
-                    <div class="card-tools">
-                      <button type="button" class="btn btn-tool" data-card-widget="collapse">-</button>
-                    </div>
-                </div>
-                <div class="card-body">
-                  <div class="container">
-                    <div class="row">
-                      <div class="col">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="has_board_kilter_7x10">
-                          <label class="form-check-label"> 7x10 (Home)</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="has_board_kilter_12x12">
-                          <label class="form-check-label"> 12x12</label>
-                        </div>
-                      </div>
-                      <div class="col">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="has_board_kilter_8x12">
-                          <label class="form-check-label"> 8x12</label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="has_board_kilter_16x12">
-                          <label class="form-check-label"> 16x12</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card card-info">
             <div class="card-header"><h3 class="card-title">Fitness</h3></div>
             <div class="card-body">
               <div class="form-check">
@@ -193,6 +133,154 @@
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" id="has_fitness_cardio">
                 <label class="form-check-label"> Cardio Machines</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="card card-info">
+            <div class="card-header"><h3 class="card-title">Training Boards</h3></div>
+            <div class="card-body container">
+              <b>When choosing a board size, please choose the smallest size you would like (WxH).</b>
+              <p>
+                Some training boards may give you the option to choose a board size and/or hold set. 
+                Larger board sizes of one set will contain all holds from smaller sizes of that board and set.
+                (ie: The Kilter 8x12 has all the holds that the Kilter 7x10 does, along with additional holds.)
+              </p>
+              <div class="row">
+                <div class="col">
+                  <div class="card">
+                    <div class="card-header"><h4 class="card-title">Board Position</h4></div>
+                    <div class="card-body">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="position_fixed">
+                            <label class="form-check-label"> Fixed</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="position_adjustable">
+                            <label class="form-check-label"> Adjustable</label>
+                          </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card">
+                    <div class="card-header"><h4 class="card-title">Kilter</h4></div>
+                    <div class="card-body">
+                      <b>Size:</b>
+                      <select id="has_board_kilter" class="form-select form-select-lg mb-3">
+                        <option selected value="7x10">7x10 (Home)</option>
+                        <option>8x12</option>
+                        <option>12x12</option>
+                        <option>16x12</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card">
+                    <div class="card-header"><h4 class="card-title">Tension 1</h4></div>
+                    <div class="card-body">
+                      <b>Size:</b>
+                      <select id="has_board_kilter" class="form-select form-select-lg mb-3">
+                        <option selected>8x10</option>
+                        <option>8x12</option>
+                      </select>
+                      <b>Set:</b>
+                      <div class="container row">
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_tension1_set_a">
+                            <label class="form-check-label"> A</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_tension1_set_b">
+                            <label class="form-check-label"> B</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_tension1_set_c">
+                            <label class="form-check-label"> C</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card">
+                    <div class="card-header"><h4 class="card-title">Tension 2</h4></div>
+                    <div class="card-body">
+                      <b>Size:</b>
+                      <select id="has_board_kilter" class="form-select form-select-lg mb-3">
+                        <option selected>8x10</option>
+                        <option>12x10</option>
+                        <option>8x12</option>
+                        <option>12x12</option>
+                      </select>
+                      <b>Set:</b>
+                      <div class="container row">
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_tension2_spray">
+                            <label class="form-check-label"> Spray</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_tension2_mirror">
+                            <label class="form-check-label"> Mirror</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="card">
+                    <div class="card-header"><h4 class="card-title">MoonBoard</h4></div>
+                    <div class="card-body">
+                      <b>Set:</b>
+                      <div class="container row">
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_moonboard_2016">
+                            <label class="form-check-label"> 2016</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_moonboard_2017">
+                            <label class="form-check-label"> 2017</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_moonboard_2019">
+                            <label class="form-check-label"> 2019</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_moonboard_2024">
+                            <label class="form-check-label"> 2024</label>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="has_board_moonboard_mini2020">
+                            <label class="form-check-label"> Mini 2020</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
