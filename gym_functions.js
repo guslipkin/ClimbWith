@@ -4,8 +4,7 @@ function addGymsToTable(gymData) {
         var gymRow = getGymRow(gymData, i);
         gymTable.rows.add([gymRow]).draw(false);
     }
-    gymGroup.clearLayers().addLayer(getGymGroup(gymData));
-    map.fitBounds(gymGroup.getBounds(), { maxZoom: 12 });
+    drawMap(gymData);
 }
 
 function getGymGroup(gymData) {
@@ -25,23 +24,41 @@ function getGymGroup(gymData) {
     return new L.featureGroup(gyms);
 }
 
-function filterMap(selectedGyms) {
+function drawMap(selectedGyms) {
     gymGroup.clearLayers().addLayer(getGymGroup(selectedGyms));
-    map.fitBounds(gymGroup.getBounds(), { maxZoom: 12 });
+    map.fitBounds(gymGroup.getBounds(), { maxZoom: 12, padding: [15, 15] });   
 }
 
 function filterCheckbox(e) {
     var id = e.target.id.substring(4);
     var boxes = [...checkboxes];
-    var selectedGyms = 
+    var regexFeatures = new RegExp('^(has_|board_)(.*)');
+    var regexBoards = new RegExp('^(position_)(.*)');
+    var boxTable = 
         aq.table({
-            'criteria': boxes.map(x => x.id.substring(4)),
+            'criteria': boxes.map(x => x.id),
             'value':    boxes.map(x => x.checked)
+        });
+    var features = 
+        boxTable
+        .filter(aq.escape(d => d.criteria.match(regexFeatures)))
+        .derive({ 
+            criteria: aq.escape(d => regexFeatures.exec(d.criteria)[2]),
+            value: d => open.sum(d.value) == 0 ? false : d.value
         })
-        .derive({ value: d => open.sum(d.value) == 0 ? false : d.value })
         .filter(d => d.value)
         .pivot('criteria', 'value');
-    selectedGyms = selectedGyms.numRows() > 0 ? selectedGyms.join(gymData) : gymData;
-    filterMap(selectedGyms);
+    var boardPositions =
+        boxTable
+        .filter(aq.escape(d => d.criteria.match(regexBoards)))
+        .derive({ 
+            criteria: aq.escape(d => regexBoards.exec(d.criteria)[2]),
+            value: d => open.sum(d.value) == 0 ? false : d.value
+        })
+        .filter(d => d.value)
+        .print();
+    boardPositions.join(getGymBoard()).print();
+    selectedGyms = features.numRows() > 0 ? features.join(gymData) : gymData;
+    drawMap(selectedGyms);
     addGymsToTable(selectedGyms);
 }

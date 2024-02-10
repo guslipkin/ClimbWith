@@ -56,9 +56,9 @@ const gymTable = new DataTable('#gymTable', {
     columns: [
         { data: 'full_name',    render: renderFullName  },
         { data: 'boulder',      render: renderBoolean   },
-        { data: 'top_rope',     render: renderBoolean   },
+        { data: 'toprope',     render: renderBoolean   },
         { data: 'lead',         render: renderBoolean   },
-        { data: 'auto_belay',   render: renderBoolean   }
+        { data: 'autobelay',   render: renderBoolean   }
     ],
     buttons: []
 });
@@ -71,10 +71,17 @@ gymTable.on('click', 'tbody tr', function(e) {
     var selectedRows = gymTable.rows('.selected').data();
     selectedGyms = selectedRows.slice(0, selectedRows.length + 1).map(x => x.name);
     selectedGyms = selectedGyms.length == 0 ? gymData : gymData.semijoin(aq.table({'name': selectedGyms}), 'name');
-    filterMap(selectedGyms);
+    drawMap(selectedGyms);
 });
 
 var checkboxes = document.querySelectorAll("input[type='checkbox']");
 for (var i = 0; i < checkboxes.length; i++) {
     checkboxes[i].addEventListener("click", filterCheckbox);
 }
+
+$( '#kilter-select' ).select2( {
+    theme: "bootstrap-5",
+    width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+    placeholder: $( this ).data( 'placeholder' ),
+    closeOnSelect: false,
+} );
