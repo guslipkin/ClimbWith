@@ -8,3 +8,23 @@ function renderFullName(data, type) {
 function renderBoolean(data, type) {
     return data ? 'x' : ''
 }
+
+function getPopup(gymRow) {
+    console.log(Object.keys(gymRow).filter(x => gymRow[x] === true));
+    var header = `<h6>${gymRow.full_name}</h6>`;
+    var table = `
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Feature</th>
+                    <th scope="col">Has?</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>Bouldering</td>
+                <td>${gymRow.boulder}</td>
+            </tr>
+        </table>
+    `;
+    return `${header}<br>${table}`;
+}

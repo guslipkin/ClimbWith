@@ -13,7 +13,7 @@ function getGymGroup(gymData) {
         var gymRow = getGymRow(gymData, i);
     
         var gym = L.marker([gymRow.lat, gymRow.lon], {alt: gymRow.full_name}).addTo(map);
-        gym.bindPopup(gymRow.full_name);
+        gym.bindPopup(getPopup(gymRow));
         gym.on({
           mouseover: function(e) { this.openPopup(); },
           mouseout: function(e) { this.closePopup(); }
