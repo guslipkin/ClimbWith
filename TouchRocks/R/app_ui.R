@@ -64,13 +64,6 @@ app_ui <- function(request) {
               collapsible = FALSE,
               shiny::fluidRow(
                 shiny::column(
-                  width = 12,
-                  shiny::tags$b('When choosing a board size, please choose the smallest size you would like (WxH).'),
-                  shiny::tags$p(' Some training boards may give you the option to choose a board size and/or hold set. Larger board sizes of one set will contain all holds from smaller sizes of that board and set. (ie: The Kilter 8x12 has all the holds that the Kilter 7x10 does, along with additional holds.) ')
-                )
-              ),
-              shiny::fluidRow(
-                shiny::column(
                   width = 6,
                   bs4Dash::box(
                     title = 'Board Angle',
