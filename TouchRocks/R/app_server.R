@@ -36,11 +36,21 @@ app_server <- function(input, output, session) {
       .filter_fitness(input$filter_fitness) |>
       .filter_board_angle(input$filter_board_angle) |>
       .filter_generic_board(input$filter_generic_board) |>
+      .filter_sictb(
+        input$filter_kilter_board_size,
+        input$filter_tension1_board_size, input$filter_tension1_board_set,
+        input$filter_tension2_board_size, input$filter_tension2_board_set,
+        input$filter_moonboard_board_set
+      ) |>
       data()
   }) |>
     shiny::bindEvent(
       input$filter_climbing, input$filter_fitness,
       input$filter_board_angle, input$filter_generic_board,
-      ignoreNULL = FALSE
+      input$filter_kilter_board_size,
+      input$filter_tension1_board_size, input$filter_tension1_board_set,
+      input$filter_tension2_board_size, input$filter_tension2_board_set,
+      input$filter_moonboard_board_set,
+      ignoreNULL = FALSE, ignoreInit = TRUE
     )
 }
