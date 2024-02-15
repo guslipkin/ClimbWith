@@ -26,6 +26,7 @@ attachment::att_amend_desc()
 ## Add helper functions ----
 ## Creates fct_* and utils_*
 # golem::add_fct("helpers", with_test = TRUE)
+golem::add_utils("get_globals", with_test = FALSE)
 golem::add_utils("data", with_test = FALSE)
 golem::add_utils("map", with_test = FALSE)
 golem::add_utils("table", with_test = FALSE)
@@ -49,7 +50,7 @@ usethis::use_test("app")
 # Documentation
 
 ## Vignette ----
-usethis::use_vignette("TouchRocks")
+usethis::use_vignette("ClimbWith")
 devtools::build_vignettes()
 
 ## Code Coverage----

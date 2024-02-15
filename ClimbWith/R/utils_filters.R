@@ -1,18 +1,19 @@
-.filter_climbing <- function(.data, input_filter_climbing) {
-  if (is.null(input_filter_climbing)) return(.data)
+.filter_climbing <- function(tab, input_filter_climbing) {
+  if (is.null(input_filter_climbing)) return(tab)
   climbing <- c(
     'Bouldering' = 'bouldering',
     'Top Rope' = 'top_rope',
     'Lead' = 'lead',
     'Auto Belay' = 'auto_belay'
   )
-  .data |>
+  tab |>
     dplyr::filter(
-      dplyr::if_any(tidyselect::all_of(climbing[input_filter_climbing]))
+      dplyr::if_all(tidyselect::all_of(climbing[input_filter_climbing]))
     ) |>
     dplyr::select(.data$name) |>
-    dplyr::inner_join(
-      y = .data,
+    unique() |>
+    dplyr::left_join(
+      y = tab,
       by = 'name'
     )
 }
@@ -27,10 +28,11 @@
   )
   .data |>
     dplyr::filter(
-      dplyr::if_any(tidyselect::all_of(fitness[input_filter_fitness]))
+      dplyr::if_all(tidyselect::all_of(fitness[input_filter_fitness]))
     ) |>
     dplyr::select(.data$name) |>
-    dplyr::inner_join(
+    unique() |>
+    dplyr::left_join(
       y = .data,
       by = 'name'
     )
@@ -58,7 +60,8 @@
       dplyr::if_any(tidyselect::matches('_board_|spray_wall'), \(x) !is.na(x))
     ) |>
     dplyr::select(.data$name) |>
-    dplyr::inner_join(
+    unique() |>
+    dplyr::left_join(
       y = .data,
       by = 'name'
     )
@@ -78,22 +81,35 @@
       dplyr::if_all(tidyselect::all_of(generic_board[input_filter_generic_board]))
     ) |>
     dplyr::select(.data$name) |>
-    dplyr::inner_join(
+    unique() |>
+    dplyr::left_join(
       y = .data,
       by = 'name'
     )
 }
 
-.make_board_name <- function(brand = '', model = '', size = '', set = '') {
-  if (any(purrr::map_lgl(list(brand, model, size, set), is.null))) {
+.make_board_name <- function(brand, model, size, set, default_size, default_set) {
+  has_size_set <- purrr::map_lgl(list(size, set), is.null)
+  if (all(has_size_set)) {
+      dt <-
+        tibble::tibble(
+          'brand' = NA_character_,
+          'model' = NA_character_,
+          'size' = NA_character_,
+          'set' = NA_character_
+        ) |>
+        utils::head(0)
+      return(dt)
+  } else if (any(has_size_set)) {
     dt <-
-      tibble::tibble(
-        'brand' = NA_character_,
-        'model' = NA_character_,
-        'size' = NA_character_,
-        'set' = NA_character_
+      expand.grid(
+        'brand' = brand,
+        'model' = model,
+        'size' = `if`(is.null(size), default_size, size),
+        'set' = `if`(is.null(set), default_set, set)
       ) |>
-      head(0)
+      tibble::as_tibble() |>
+      utils::head(0)
     return(dt)
   }
   if (any(size != '')) {
@@ -115,13 +131,37 @@
     input_filter_moonboard_set
   ) {
 
+  user_wants <-
+    dplyr::bind_rows(
+      .make_board_name(
+        'kilter', '', input_filter_kilter_board_size, '',
+        .get_kilter_size(), .get_kilter_set()
+      ),
+      .make_board_name(
+        'tension', 'tension_1', input_filter_tension1_board_size, input_filter_tension1_board_set,
+        .get_tension1_size(), .get_tension1_set()
+      ),
+      .make_board_name(
+        'tension', 'tension_2', input_filter_tension2_board_size, input_filter_tension2_board_set,
+        .get_tension2_size(), .get_tension2_set()
+      ),
+      .make_board_name(
+        'moon', 'moon_board', '', input_filter_moonboard_set,
+        .get_moonboard_size(), .get_moonboard_set()
+      )
+    ) |>
+    dplyr::mutate(
+      'set' = ifelse(.data$brand == 'moon', stringr::str_replace(.data$set, '\\w', ''), .data$set)
+    )
+  if (nrow(user_wants) == 0) return(.data)
+
   board_types <-
     dplyr::bind_rows(
       {
         .data |>
           dplyr::select('name', tidyselect::matches('kilter_board')) |>
           tidyr::pivot_longer(
-            cols = !name,
+            cols = -'name',
             names_to = c('brand', 'model', 'size', 'set'),
             names_pattern = '(kilter)_board_()(\\d+x\\d+(_home)?)'
           ) |>
@@ -131,7 +171,7 @@
         .data |>
           dplyr::select('name', tidyselect::matches('tension_board')) |>
           tidyr::pivot_longer(
-            cols = !name,
+            cols = -'name',
             names_to = c('brand', 'model', 'size', 'set'),
             names_pattern = '(tension)_board_(tension_[12])_(\\d{1,2}x\\d{1,2})_(.*)'
           )
@@ -140,32 +180,24 @@
         .data |>
           dplyr::select('name', tidyselect::matches('moon_board')) |>
           tidyr::pivot_longer(
-            cols = !name,
+            cols = -'name',
             names_to = c('brand', 'model', 'size', 'set'),
             names_pattern = '(moon)_board_(moon_board)_(mini)?_?(\\d{4})'
           )
       }
     ) |>
     dplyr::filter(!is.na(.data$value))
-  user_wants <-
-    dplyr::bind_rows(
-      .make_board_name('kilter', '', input_filter_kilter_board_size, ''),
-      .make_board_name('tension', 'tension_1', input_filter_tension1_board_size, input_filter_tension1_board_set),
-      .make_board_name('tension', 'tension_2', input_filter_tension2_board_size, input_filter_tension2_board_set),
-      .make_board_name('moon', 'moon_board', '', input_filter_moonboard_set)
-    )
-  if (nrow(user_wants) > 0) {
-    board_types <-
-      board_types |>
-      dplyr::inner_join(
-        y = user_wants,
-        by = c('brand', 'model', 'size', 'set')
-      )
-  }
-  board_types |>
+
+  user_wants |>
+    dplyr::left_join(
+      y = board_types,
+      by = c('brand', 'model', 'size', 'set')
+    ) |>
     dplyr::select(.data$name) |>
     dplyr::inner_join(
       y = .data,
       by = 'name'
-    )
+    ) |>
+    dplyr::filter(dplyr::n() == nrow(user_wants), .by = 'name') |>
+    unique()
 }

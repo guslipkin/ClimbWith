@@ -19,12 +19,12 @@
 ## to change the name in the app_sys() function in app_config.R /!\
 ##
 golem::fill_desc(
-  pkg_name = "TouchRocks", # The Name of the package containing the App
+  pkg_name = "ClimbWith", # The Name of the package containing the App
   pkg_title = "Find Rock Climbing Gyms", # The Title of the package containing the App
   pkg_description = "Look for rock climbing gyms based on features you want", # The Description of the package containing the App
   author_first_name = "Gus", # Your First Name
   author_last_name = "Lipkin", # Your Last Name
-  author_email = "touchrocks@guslipkin.me", # Your Email
+  author_email = "climbwith@guslipkin.me", # Your Email
   repo_url = NULL, # The URL of the GitHub Repo (optional),
   pkg_version = "0.0.0.9000" # The Version of the package containing the App
 )

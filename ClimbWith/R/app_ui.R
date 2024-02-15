@@ -6,9 +6,12 @@
 #' @noRd
 app_ui <- function(request) {
   bs4Dash::dashboardPage(
+    scrollToTop = TRUE,
+    preloader = list(html = shiny::tagList(waiter::spin_1(), "Loading ..."), color = "#3c8dbc"),
     header = bs4Dash::bs4DashNavbar(
+      status = 'primary',
       title = bs4Dash::dashboardBrand(
-        title = 'Touch Rocks',
+        title = 'ClimbWith',
         color = 'primary'
       )
     ),
@@ -18,21 +21,32 @@ app_ui <- function(request) {
     body = bs4Dash::dashboardBody(
       bs4Dash::box(
         title = 'Map',
-        color = 'secondary',
         width = 12,
-        maximizable = TRUE,
+        status = 'secondary',
+        solidHeader = TRUE,
+        # maximizable = TRUE,
         leaflet::leafletOutput('map')
       ),
       bs4Dash::box(
         title = 'Filters',
-        width = 12,
         id = 'box_filter',
+        width = 12,
+        status = 'secondary',
+        solidHeader = TRUE,
+        dropdownMenu = bs4Dash::actionButton(
+          inputId = 'clear_filters',
+          label = NULL,
+          status = 'warning',
+          size = 'xs'
+        ),
         shiny::fluidRow(
           shiny::column(
             width = 6,
             bs4Dash::box(
               title = 'Climbing',
               width = 12,
+              status = 'info',
+              solidHeader = TRUE,
               collapsible = FALSE,
               shinyWidgets::awesomeCheckboxGroup(
                 inputId = 'filter_climbing',
@@ -46,6 +60,8 @@ app_ui <- function(request) {
             bs4Dash::box(
               title = 'Fitness',
               width = 12,
+              status = 'info',
+              solidHeader = TRUE,
               collapsible = FALSE,
               shinyWidgets::awesomeCheckboxGroup(
                 inputId = 'filter_fitness',
@@ -61,7 +77,9 @@ app_ui <- function(request) {
             bs4Dash::box(
               title = 'Training Boards',
               width = 12,
-              collapsible = FALSE,
+              status = 'info',
+              solidHeader = TRUE,
+              collapsible = TRUE,
               shiny::fluidRow(
                 shiny::column(
                   width = 6,
@@ -69,11 +87,11 @@ app_ui <- function(request) {
                     title = 'Board Angle',
                     width = 12,
                     collapsible = FALSE,
-                    shiny::tags$p('An angle of 0° is a vertical wall and 90° is a horizontal wall.'),
+                    shiny::tags$p('An angle of 0\u00B0 is a vertical wall and 90\u00B0 is a horizontal wall.'),
                     shinyWidgets::sliderTextInput(
                       inputId = 'filter_board_angle',
                       label = NULL,
-                      choices = c('Adjustable', seq(0L, 90L, by = 5L)),
+                      choices = c('Adjustable', as.character(seq(0L, 90L, by = 5L))),
                       selected = c('Adjustable', '90'),
                       force_edges = TRUE,
                       grid = TRUE
@@ -104,7 +122,7 @@ app_ui <- function(request) {
                     shinyWidgets::pickerInput(
                       inputId = 'filter_kilter_board_size',
                       label = 'Size:',
-                      choices = c('7x10 (Home)', '8x12', '12x12', '16x12'),
+                      choices = .get_kilter_size(),
                       multiple = TRUE,
                       options = shinyWidgets::pickerOptions(
                         actionsBox = TRUE,
@@ -125,7 +143,7 @@ app_ui <- function(request) {
                         shinyWidgets::pickerInput(
                           inputId = 'filter_tension1_board_size',
                           label = 'Size:',
-                          choices = c('8x10', '10x12'),
+                          choices = .get_tension1_size(),
                           multiple = TRUE,
                           options = shinyWidgets::pickerOptions(
                             actionsBox = TRUE,
@@ -140,7 +158,7 @@ app_ui <- function(request) {
                         shinyWidgets::pickerInput(
                           inputId = 'filter_tension1_board_set',
                           label = 'Set:',
-                          choices = c('A', 'B', 'C'),
+                          choices = .get_tension1_set(),
                           multiple = TRUE,
                           options = shinyWidgets::pickerOptions(
                             actionsBox = TRUE,
@@ -163,7 +181,7 @@ app_ui <- function(request) {
                         shinyWidgets::pickerInput(
                           inputId = 'filter_tension2_board_size',
                           label = 'Size:',
-                          choices = c('8x10', '12x10', '8x12', '12x12'),
+                          choices = .get_tension2_size(),
                           multiple = TRUE,
                           options = shinyWidgets::pickerOptions(
                             actionsBox = TRUE,
@@ -178,7 +196,7 @@ app_ui <- function(request) {
                         shinyWidgets::pickerInput(
                           inputId = 'filter_tension2_board_set',
                           label = 'Set:',
-                          choices = c('Spray', 'Mirror'),
+                          choices = .get_tension2_set(),
                           multiple = TRUE,
                           options = shinyWidgets::pickerOptions(
                             actionsBox = TRUE,
@@ -198,7 +216,7 @@ app_ui <- function(request) {
                     shinyWidgets::pickerInput(
                       inputId = 'filter_moonboard_board_set',
                       label = 'Set:',
-                      choices = c('2016', '2017', '2019', '2024', 'Mini 2020'),
+                      choices = .get_moonboard_set(),
                       multiple = TRUE,
                       options = shinyWidgets::pickerOptions(
                         actionsBox = TRUE,
@@ -216,10 +234,21 @@ app_ui <- function(request) {
         title = 'Table',
         width = 12,
         id = 'box_table',
+        status = 'secondary',
+        solidHeader = TRUE,
         DT::DTOutput('table')
       ),
       golem_add_external_resources()
     )
+    # footer = bs4Dash::dashboardFooter(
+    #   left = shiny::div(
+    #     'Jump To: ',
+    #     shinyWidgets::actionBttn(inputId = 'jump_to_map', label = 'Map', style = 'material-flat'),
+    #     shinyWidgets::actionBttn(inputId = 'jump_to_filters', label = 'Filters', style = 'material-flat'),
+    #     shinyWidgets::actionBttn(inputId = 'jump_to_table', label = 'Table', style = 'material-flat')
+    #   ),
+    #   fixed = TRUE
+    # )
   )
 }
 
@@ -241,7 +270,7 @@ golem_add_external_resources <- function() {
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "TouchRocks"
+      app_title = "ClimbWith"
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()

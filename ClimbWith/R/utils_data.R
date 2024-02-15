@@ -1,0 +1,75 @@
+#' data
+#'
+#' @description A utils function
+#'
+#' @return The return value, if any, from executing the utility.
+#'
+#' @noRd
+.get_data <- function() {
+  readr::read_csv('data/data.csv', show_col_types = FALSE) |>
+    janitor::clean_names() |>
+    dplyr::mutate(
+      dplyr::across(
+        tidyselect::matches('spray_wall|board_'), # fix training boards
+        \(x) {
+          dplyr::case_when(
+            x == 'Unknown' ~ '-2',
+            x == 'Adjustable' ~ '-1',
+            .default = as.character(x)
+          ) |>
+            as.integer()
+        }
+      ),
+      dplyr::across(
+        tidyselect::everything(),
+        \(x) {
+          if (!all(unique(x) %in% c('Yes', 'No', ''))) return(x)
+          dplyr::case_match(x, 'Yes' ~ TRUE, 'No' ~ FALSE, '' ~ NA)
+        }
+      ),
+      'lat' = purrr::map_dbl(.data$google_maps_link, \(x) {
+        stringr::str_match(x, '/@(-?\\d+\\.\\d+),')[1,2] |>
+          as.numeric()
+      }),
+      'lon' = purrr::map_dbl(.data$google_maps_link, \(x) {
+        stringr::str_match(x, ',(-?\\d+\\.\\d+),\\d+')[1,2] |>
+          as.numeric()
+      })
+    ) |>
+    dplyr::mutate(
+      'full_name' = .data$gym_name,
+      'name' = janitor::make_clean_names(.data$gym_name),
+      .before = 1
+    ) |>
+    dplyr::select(-'gym_name') |>
+    dplyr::arrange(.data$full_name) -> dt
+}
+
+.table_lookup <- function(lookup = TRUE) {
+  c(
+    "kilter_board_7x10_home" = 'Kilter 7x10 (Home)',
+    "kilter_board_8x12" = 'Kilter 8x12',
+    "kilter_board_12x12" = 'Kilter 12x12',
+    "kilter_board_16x12" = 'Kilter 16x12',
+    "tension_board_tension_1_8x10_set_a" = 'Tension 1 8x10 Set A',
+    "tension_board_tension_1_8x10_set_b" = 'Tension 1 8x10 Set B',
+    "tension_board_tension_1_8x10_set_c" = 'Tension 1 8x10 Set C',
+    "tension_board_tension_1_8x12_set_a" = 'Tension 1 8x12 Set A',
+    "tension_board_tension_1_8x12_set_b" = 'Tension 1 8x12 Set B',
+    "tension_board_tension_1_8x12_set_c" = 'Tension 1 8x12 Set C',
+    "tension_board_tension_2_8x10_spray" = 'Tension 2 8x10 Spray',
+    "tension_board_tension_2_8x10_mirror" = 'Tension 2 8x10 Mirror',
+    "tension_board_tension_2_8x12_spray" = 'Tension 2 8x12 Spray',
+    "tension_board_tension_2_8x12_mirror" = 'Tension 2 8x12 Mirror',
+    "tension_board_tension_2_12x10_spray" = 'Tension 2 12x10 Spray',
+    "tension_board_tension_2_12x10_mirror" = 'Tension 2 12x10 Mirror',
+    "tension_board_tension_2_12x12_spray" = 'Tension 2 12x12 Spray',
+    "tension_board_tension_2_12x12_mirror" = 'Tension 2 12x12 Mirror',
+    "moon_board_moon_board_2016" = 'MoonBoard 2016',
+    "moon_board_moon_board_2017" = 'MoonBoard 2017',
+    "moon_board_moon_board_2019" = 'MoonBoard 2019',
+    "moon_board_moon_board_2024" = 'MoonBoard 2024',
+    "moon_board_moon_board_mini_2020" = 'MoonBoard Mini 2020',
+    "spray_wall" = "Spray Wall"
+  )[lookup]
+}
