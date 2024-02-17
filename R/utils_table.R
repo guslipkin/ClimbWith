@@ -45,13 +45,15 @@
       ),
       escape = FALSE,
       rownames = FALSE,
+      extensions = 'Buttons',
       selection = list(
         mode = 'multiple',
         selected = NULL,
         target = 'row'
       ),
       options = list(
-        'scrollX' = TRUE
+        'scrollX' = TRUE,
+        'buttons' = 'colvis'
       )
     )
 }
@@ -66,7 +68,7 @@
     ) |>
     dplyr::filter(!is.na(.data$angle)) |>
     dplyr::mutate(
-      'board' = .table_lookup(.data$board),
+      'board' = .board_lookup(.data$board),
       'angle' = dplyr::case_match(
         .data$angle,
         -2 ~ 'Unknown',

@@ -8,6 +8,8 @@ app_server <- function(input, output, session) {
   shiny::updateActionButton(inputId = 'clear_filters', label = 'Clear Filters')
   full_data <- .get_data()
   dat <- shiny::reactiveVal(full_data)
+  .column_grouping <- .table_column_grouping()
+
   output$map <-
     dat() |>
     .create_map() |>
@@ -16,6 +18,21 @@ app_server <- function(input, output, session) {
     dat() |>
     .create_table() |>
     DT::renderDT()
+
+  shiny::observe({
+    if (is.null(input$table_columns))
+      shinyWidgets::updateCheckboxGroupButtons(
+        inputId = 'table_columns',
+        selected = names(.column_grouping)
+      )
+    wanted_cols <- .column_grouping[input$table_columns]
+    DT::dataTableProxy('table') |>
+      DT::showCols(
+        c(0, which(unlist(.column_grouping) %in% unlist(wanted_cols))),
+        reset = TRUE
+      )
+  }) |>
+    shiny::bindEvent(input$table_columns, ignoreNULL = FALSE)
 
   shiny::observe({
     shinyWidgets::updateAwesomeCheckboxGroup(session, inputId = 'filter_climbing', selected = FALSE)
@@ -51,8 +68,8 @@ app_server <- function(input, output, session) {
 
   shiny::observe({
     full_data |>
-      .filter_climbing(input$filter_climbing) |>
-      .filter_fitness(input$filter_fitness) |>
+      .filter_climbing(input$filter_climbing, .column_grouping$Climbing) |>
+      .filter_fitness(input$filter_fitness, .column_grouping$Fitness) |>
       .filter_board_angle(input$filter_board_angle) |>
       .filter_generic_board(input$filter_generic_board) |>
       .filter_sictb(
@@ -72,4 +89,13 @@ app_server <- function(input, output, session) {
       input$filter_moonboard_board_set,
       ignoreNULL = FALSE, ignoreInit = TRUE
     )
+
+  shiny::observe({
+    shinyWidgets::show_alert(
+      "We're working on the data submission process",
+      "Thank you for your patience",
+      type = 'info'
+    )
+  }) |>
+    shiny::bindEvent(input$add_gym)
 }

@@ -1,11 +1,5 @@
-.filter_climbing <- function(tab, input_filter_climbing) {
+.filter_climbing <- function(tab, input_filter_climbing, climbing) {
   if (is.null(input_filter_climbing)) return(tab)
-  climbing <- c(
-    'Bouldering' = 'bouldering',
-    'Top Rope' = 'top_rope',
-    'Lead' = 'lead',
-    'Auto Belay' = 'auto_belay'
-  )
   tab |>
     dplyr::filter(
       dplyr::if_all(tidyselect::all_of(climbing[input_filter_climbing]))
@@ -18,14 +12,8 @@
     )
 }
 
-.filter_fitness <- function(.data, input_filter_fitness) {
+.filter_fitness <- function(.data, input_filter_fitness, fitness) {
   if (is.null(input_filter_fitness)) return(.data)
-  fitness <- c(
-    'Yoga Studio' = 'yoga_studio',
-    'Free Weights' = 'free_weights',
-    'Weight Machines' = 'weight_machines',
-    'Cardio Machines' = 'cardio_machines'
-  )
   .data |>
     dplyr::filter(
       dplyr::if_all(tidyselect::all_of(fitness[input_filter_fitness]))
@@ -157,7 +145,7 @@
 
   board_types <-
     dplyr::bind_rows(
-      {
+      'kilter' = {
         .data |>
           dplyr::select('name', tidyselect::matches('kilter_board')) |>
           tidyr::pivot_longer(
@@ -167,7 +155,7 @@
           ) |>
           dplyr::mutate('set' = '')
       },
-      {
+      'tension' = {
         .data |>
           dplyr::select('name', tidyselect::matches('tension_board')) |>
           tidyr::pivot_longer(
@@ -176,7 +164,7 @@
             names_pattern = '(tension)_board_(tension_[12])_(\\d{1,2}x\\d{1,2})_(.*)'
           )
       },
-      {
+      'moonboard' = {
         .data |>
           dplyr::select('name', tidyselect::matches('moon_board')) |>
           tidyr::pivot_longer(

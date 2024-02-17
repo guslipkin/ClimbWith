@@ -45,7 +45,39 @@
     dplyr::arrange(.data$full_name) -> dt
 }
 
-.table_lookup <- function(lookup = TRUE) {
+.column_group_wider <- function(.data, column, values) {
+  .data |>
+    dplyr::mutate(
+      'new_var' = stringr::str_split(.data[[column]], ', ')
+    ) |>
+    dplyr::select(-tidyselect::all_of(column)) |>
+    tidyr::unnest_longer('new_var') |>
+    dplyr::bind_rows(
+      tibble::tibble(
+        'name' = NA_character_,
+        'new_var' = values
+      )
+    ) |>
+    dplyr::mutate('has_new_var' = TRUE) |>
+    tidyr::pivot_wider(
+      id_cols = 'name',
+      names_from = 'new_var',
+      values_from = 'has_new_var',
+      values_fill = FALSE
+    ) |>
+    dplyr::filter(!is.na(.data$name))
+}
+
+# tibble::tibble(
+#   'name' = c('framingham', 'worcester'),
+#   'climbing' = c('Bouldering', 'Top Rope, Lead')
+# ) |>
+#   .column_group_wider(
+#     'climbing',
+#     c('Bouldering', 'Top Rope', 'Lead')
+#   )
+
+.board_lookup <- function(lookup = TRUE) {
   c(
     "kilter_board_7x10_home" = 'Kilter 7x10 (Home)',
     "kilter_board_8x12" = 'Kilter 8x12',
@@ -72,4 +104,16 @@
     "moon_board_moon_board_mini_2020" = 'MoonBoard Mini 2020',
     "spray_wall" = "Spray Wall"
   )[lookup]
+}
+
+.table_column_grouping <- function() {
+  readr::read_csv('data/column_grouping.csv', show_col_types = FALSE) |>
+    tidyr::pivot_wider(names_from = 'columnGroup', values_from = 'activity') |>
+    dplyr::select('Climbing', 'Training Boards', 'Fitness') |>
+    suppressWarnings() |>
+    as.list() |>
+    unlist(recursive = FALSE) |>
+    purrr::map(\(x) {
+      stats::setNames(janitor::make_clean_names(x), x)
+    })
 }

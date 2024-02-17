@@ -5,14 +5,17 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
+  .column_grouping <- .table_column_grouping()
   bs4Dash::dashboardPage(
     scrollToTop = TRUE,
+    dark = NULL,
+    help = NULL,
     preloader = list(html = shiny::tagList(waiter::spin_1(), "Loading ..."), color = "#3c8dbc"),
     header = bs4Dash::bs4DashNavbar(
-      status = 'primary',
+      status = 'lightblue',
       title = bs4Dash::dashboardBrand(
         title = 'ClimbWith',
-        color = 'primary'
+        color = 'lightblue'
       )
     ),
     sidebar = bs4Dash::dashboardSidebar(
@@ -20,9 +23,9 @@ app_ui <- function(request) {
     ),
     body = bs4Dash::dashboardBody(
       bs4Dash::box(
-        title = 'Map',
+        title = 'Maps',
         width = 12,
-        status = 'secondary',
+        status = 'primary',
         solidHeader = TRUE,
         # maximizable = TRUE,
         leaflet::leafletOutput('map')
@@ -31,7 +34,7 @@ app_ui <- function(request) {
         title = 'Filters',
         id = 'box_filter',
         width = 12,
-        status = 'secondary',
+        status = 'primary',
         solidHeader = TRUE,
         dropdownMenu = bs4Dash::actionButton(
           inputId = 'clear_filters',
@@ -51,7 +54,7 @@ app_ui <- function(request) {
               shinyWidgets::awesomeCheckboxGroup(
                 inputId = 'filter_climbing',
                 label = NULL,
-                choices = c('Bouldering', 'Top Rope', 'Lead', 'Auto Belay')
+                choices = names(.column_grouping$Climbing)
               )
             )
           ),
@@ -66,7 +69,7 @@ app_ui <- function(request) {
               shinyWidgets::awesomeCheckboxGroup(
                 inputId = 'filter_fitness',
                 label = NULL,
-                choices = c('Yoga Studio', 'Free Weights', 'Weight Machines', 'Cardio Machines')
+                choices = names(.column_grouping$Fitness)
               )
             )
           )
@@ -234,9 +237,64 @@ app_ui <- function(request) {
         title = 'Table',
         width = 12,
         id = 'box_table',
+        status = 'primary',
+        solidHeader = TRUE,
+        shinyWidgets::checkboxGroupButtons(
+          inputId = "table_columns",
+          label = NULL,
+          choices = c('Climbing', 'Training Boards', 'Fitness'),
+          selected = c('Climbing', 'Training Boards', 'Fitness'),
+          status = "info",
+          justified = TRUE,
+          individual = TRUE,
+          checkIcon = list(
+            yes = shiny::icon("ok", lib = "glyphicon"),
+            no = shiny::icon("remove", lib = "glyphicon"))
+        ),
+        DT::DTOutput('table')
+      ),
+      bs4Dash::box(
+        title = 'Help (me or you)',
+        width = 12,
+        id = 'box_help',
         status = 'secondary',
         solidHeader = TRUE,
-        DT::DTOutput('table')
+        collapsible = FALSE,
+        shiny::fluidRow(
+          shiny::column(
+            width = 4,
+            shiny::actionButton(
+              inputId = 'add_gym',
+              htmltools::img(src = 'www/images/plus-circle.svg'), ' Add my gym',
+              icon = NULL, width = NULL,
+              class = 'bg-success',
+              style = 'width: 100%;'
+              # onclick = "window.open('http://google.com', '_blank')"
+            )
+          ),
+          shiny::column(
+            width = 4,
+            shiny::actionButton(
+              inputId = 'email_me',
+              htmltools::img(src = 'www/images/envelope-at.svg'), ' Email me',
+              icon = NULL, width = NULL,
+              class = 'bg-warning',
+              style = 'width: 100%;',
+              onclick = "window.open('mailto:climbwith@guslipkin.me?subject=ClimbWith', '_blank')"
+            )
+          ),
+          shiny::column(
+            width = 4,
+            shiny::actionButton(
+              inputId = 'report_problems',
+              htmltools::img(src = 'www/images/flag.svg'), ' Report a problem',
+              icon = NULL, width = NULL,
+              class = 'bg-danger',
+              style = 'width: 100%;',
+              onclick = "window.open('https://github.com/guslipkin/ClimbWith/issues', '_blank')"
+            )
+          )
+        )
       ),
       golem_add_external_resources()
     )

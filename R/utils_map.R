@@ -31,6 +31,22 @@
         )
       )
     ) |>
+    # leaflet::addEasyButton(
+    #   leaflet::easyButton(
+    #     position = "topleft",
+    #     icon = "fa-maximize",
+    #     title = "Fit",
+    #     onClick = leaflet::JS(
+    #       "function(btn,  map){
+    #         map.eachLayer(function(layer) {
+    #           if (layer.id === 'markers') {
+    #             // map.fitBounds(map.getLayer(layer.id).getBounds());
+    #           }
+    #         });
+    #       }"
+    #     )
+    #   )
+    # ) |>
     .add_markers_and_fit(.data)
 }
 

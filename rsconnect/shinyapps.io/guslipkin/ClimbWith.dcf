@@ -1,0 +1,13 @@
+name: ClimbWith
+title: ClimbWith
+username: guslipkin
+account: guslipkin
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11251271
+bundleId: 8264753
+url: https://guslipkin.shinyapps.io/ClimbWith/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .gitattributes|.here|.nojekyll|.Rbuildignore|man/ClimbWith-package.Rd|man/run_app.Rd
