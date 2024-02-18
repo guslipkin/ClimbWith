@@ -1,3 +1,17 @@
+ .btn-table-columns {
+    color: #fff;
+    background-color: #ae440c;
+    border-color: #9f400c;
+}
+ .btn-table-columns:not(:disabled):not(.disabled).active, .btn-table-columns:not(:disabled):not(.disabled):active, .show>.btn-table-columns.dropdown-toggle {
+    background-color: #117a8b;
+    border-color: #10707f;
+}
+
+button.btn.checkbtn.btn-table-columns {
+    color: #fff;
+}
+
  .btn-group.btn-group-toggle.w-100 {
     padding: 0 .5rem 0 .5rem;
 }

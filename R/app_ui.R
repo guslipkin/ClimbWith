@@ -245,7 +245,7 @@ app_ui <- function(request) {
           label = NULL,
           choices = c('Climbing', 'Training Boards', 'Fitness'),
           selected = c('Climbing', 'Training Boards', 'Fitness'),
-          status = "info",
+          status = "table-columns",
           justified = TRUE,
           individual = TRUE,
           checkIcon = list(
