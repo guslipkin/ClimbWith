@@ -181,11 +181,10 @@
       y = board_types,
       by = c('brand', 'model', 'size', 'set')
     ) |>
-    dplyr::select(.data$name) |>
+    dplyr::select('name') |>
     dplyr::inner_join(
       y = .data,
       by = 'name'
     ) |>
-    dplyr::filter(dplyr::n() == nrow(user_wants), .by = 'name') |>
     unique()
 }
