@@ -6,7 +6,8 @@
 #'
 #' @noRd
 .get_data <- function() {
-  readr::read_csv('data/data.csv', show_col_types = FALSE) |>
+  dt <-
+    readr::read_csv('data/data.csv', show_col_types = FALSE) |>
     janitor::clean_names() |>
     dplyr::mutate(
       dplyr::across(
@@ -42,13 +43,20 @@
       .before = 1
     ) |>
     dplyr::select(-'gym_name') |>
-    dplyr::arrange(.data$full_name) -> dt
+    dplyr::arrange(.data$full_name) |>
+    .column_group_wider('climbing', .column_grouping$Climbing) |>
+    .column_group_wider('fitness', .column_grouping$Fitness)
 }
 
 .column_group_wider <- function(.data, column, values) {
   .data |>
+    dplyr::select('name', tidyselect::all_of(column)) |>
     dplyr::mutate(
-      'new_var' = stringr::str_split(.data[[column]], ', ')
+      'new_var' = (\(x) {
+        x |>
+          stringr::str_split(', ') |>
+          purrr::map(janitor::make_clean_names)
+      })(.data[[column]])
     ) |>
     dplyr::select(-tidyselect::all_of(column)) |>
     tidyr::unnest_longer('new_var') |>
@@ -65,17 +73,14 @@
       values_from = 'has_new_var',
       values_fill = FALSE
     ) |>
-    dplyr::filter(!is.na(.data$name))
+    dplyr::filter(!is.na(.data$name)) |>
+    dplyr::right_join(
+      y = .data,
+      by = 'name'
+    ) |>
+    dplyr::relocate(tidyselect::all_of(unname(values)), .after = column) |>
+    dplyr::select(-tidyselect::all_of(column))
 }
-
-# tibble::tibble(
-#   'name' = c('framingham', 'worcester'),
-#   'climbing' = c('Bouldering', 'Top Rope, Lead')
-# ) |>
-#   .column_group_wider(
-#     'climbing',
-#     c('Bouldering', 'Top Rope', 'Lead')
-#   )
 
 .board_lookup <- function(lookup = TRUE) {
   c(
