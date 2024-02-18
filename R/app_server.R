@@ -6,9 +6,9 @@
 #' @noRd
 app_server <- function(input, output, session) {
   shiny::updateActionButton(inputId = 'clear_filters', label = 'Clear Filters')
-  full_data <- .get_data()
-  dat <- shiny::reactiveVal(full_data)
   .column_grouping <- .table_column_grouping()
+  full_data <- .get_data(.column_grouping)
+  dat <- shiny::reactiveVal(full_data)
 
   output$map <-
     dat() |>

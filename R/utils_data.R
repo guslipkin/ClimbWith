@@ -5,7 +5,7 @@
 #' @return The return value, if any, from executing the utility.
 #'
 #' @noRd
-.get_data <- function() {
+.get_data <- function(.column_grouping) {
   dt <-
     readr::read_csv('data/data.csv', show_col_types = FALSE) |>
     janitor::clean_names() |>
