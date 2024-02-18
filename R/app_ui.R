@@ -42,6 +42,7 @@ app_ui <- function(request) {
           status = 'warning',
           size = 'xs'
         ),
+        collapsed = TRUE,
         shiny::fluidRow(
           shiny::column(
             width = 6,
