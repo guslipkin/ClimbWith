@@ -141,8 +141,7 @@
     ) |>
     dplyr::mutate(
       'set' = ifelse(.data$brand == 'moon', stringr::str_replace(.data$set, '\\w', ''), .data$set)
-    ) |>
-    print()
+    )
   if (nrow(user_wants) == 0) return(.data)
 
   board_types <-
