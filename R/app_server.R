@@ -61,8 +61,14 @@ app_server <- function(input, output, session) {
         type = 'warning'
       )
     }
-      leaflet::leafletProxy('map', data = dt) |>
-        .add_markers_and_fit(dt)
+
+    b <- .get_bounds(dt)
+    leaflet::leafletProxy('map', data = dt) |>
+      .add_markers_and_fit(dt) |>
+      leaflet::fitBounds(
+        b[1], b[2], b[3], b[4],
+        options = list('maxZoom' = 12, 'padding' = c(15, 15))
+      )
   }) |>
     shiny::bindEvent(dat(), input$table_rows_selected, ignoreNULL = FALSE, ignoreInit = TRUE)
 
@@ -89,13 +95,4 @@ app_server <- function(input, output, session) {
       input$filter_moonboard_board_set,
       ignoreNULL = FALSE, ignoreInit = TRUE
     )
-
-  shiny::observe({
-    shinyWidgets::show_alert(
-      "We're working on the data submission process",
-      "Thank you for your patience",
-      type = 'info'
-    )
-  }) |>
-    shiny::bindEvent(input$add_gym)
 }

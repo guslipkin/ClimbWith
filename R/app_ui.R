@@ -270,8 +270,8 @@ app_ui <- function(request) {
               htmltools::img(src = 'www/images/plus-circle.svg'), ' Add my gym',
               icon = NULL, width = NULL,
               class = 'bg-success',
-              style = 'width: 100%;'
-              # onclick = "window.open('http://google.com', '_blank')"
+              style = 'width: 100%;',
+              onclick = "window.open('https://docs.google.com/forms/d/e/1FAIpQLScWrOgaPLNc8XTY6zSXAUOM3kfpVvGI8gOI-jd70D3IuybF7A/viewform', '_blank')"
             )
           ),
           shiny::column(
