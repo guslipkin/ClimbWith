@@ -249,8 +249,9 @@ app_ui <- function(request) {
           justified = TRUE,
           individual = TRUE,
           checkIcon = list(
-            yes = shiny::icon("ok", lib = "glyphicon"),
-            no = shiny::icon("remove", lib = "glyphicon"))
+            'yes' = shiny::icon("ok", lib = "glyphicon"),
+            'no' = shiny::icon("remove", lib = "glyphicon")
+          )
         ),
         DT::DTOutput('table')
       ),

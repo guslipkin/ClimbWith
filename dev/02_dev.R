@@ -34,10 +34,10 @@ golem::add_utils("filters", with_test = FALSE)
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
-golem::add_js_file("script")
-golem::add_js_handler("handlers")
-golem::add_css_file("custom")
-golem::add_sass_file("custom")
+# golem::add_js_file("script")
+# golem::add_js_handler("handlers")
+golem::add_css_file("styles")
+# golem::add_sass_file("custom")
 
 ## Add internal datasets ----
 ## If you have data in your package
