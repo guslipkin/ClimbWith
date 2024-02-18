@@ -97,7 +97,8 @@
         'set' = `if`(is.null(set), default_set, set)
       ) |>
       tibble::as_tibble() |>
-      utils::head(0)
+      utils::head(0) |>
+      purrr::map(as.character)
     return(dt)
   }
   if (any(size != '')) {
@@ -140,7 +141,8 @@
     ) |>
     dplyr::mutate(
       'set' = ifelse(.data$brand == 'moon', stringr::str_replace(.data$set, '\\w', ''), .data$set)
-    )
+    ) |>
+    print()
   if (nrow(user_wants) == 0) return(.data)
 
   board_types <-
@@ -177,9 +179,14 @@
     dplyr::filter(!is.na(.data$value))
 
   user_wants |>
-    dplyr::left_join(
+    dplyr::mutate('.brand_count' = length(unique(.data$brand))) |>
+    dplyr::inner_join(
       y = board_types,
       by = c('brand', 'model', 'size', 'set')
+    ) |>
+    dplyr::filter(
+      length(unique(.data$brand)) == .data$.brand_count,
+      .by = 'name'
     ) |>
     dplyr::select('name') |>
     dplyr::inner_join(
