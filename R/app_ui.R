@@ -5,7 +5,7 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
-  .column_grouping <- .table_column_grouping()
+  .column_grouping <- .get_table_column_grouping()
   bs4Dash::dashboardPage(
     scrollToTop = TRUE,
     dark = NULL,

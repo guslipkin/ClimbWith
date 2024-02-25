@@ -78,7 +78,10 @@
       y = .data,
       by = 'name'
     ) |>
-    dplyr::relocate(tidyselect::all_of(unname(values)), .after = column) |>
+    dplyr::relocate(
+      tidyselect::all_of(unname(values)),
+      .after = tidyselect::all_of(column)
+    ) |>
     dplyr::select(-tidyselect::all_of(column))
 }
 
@@ -111,7 +114,7 @@
   )[lookup]
 }
 
-.table_column_grouping <- function() {
+.get_table_column_grouping <- function() {
   readr::read_csv('data/column_grouping.csv', show_col_types = FALSE) |>
     tidyr::pivot_wider(names_from = 'columnGroup', values_from = 'activity') |>
     dplyr::select('Climbing', 'Training Boards', 'Fitness') |>
@@ -121,4 +124,18 @@
     purrr::map(\(x) {
       stats::setNames(janitor::make_clean_names(x), x)
     })
+}
+
+.get_board_model <- function() {
+  readr::read_csv('data/board_model.csv', show_col_types = FALSE) |>
+    dplyr::mutate(
+      dplyr::across(
+        tidyselect::everything(),
+        \(x) ifelse(is.na(x), '', x)
+      )
+    )
+}
+
+.get_board_insets <- function() {
+  readr::read_csv('data/board_insets.csv', show_col_types = FALSE)
 }

@@ -6,7 +6,9 @@
 #' @noRd
 app_server <- function(input, output, session) {
   shiny::updateActionButton(inputId = 'clear_filters', label = 'Clear Filters')
-  .column_grouping <- .table_column_grouping()
+  .column_grouping <- .get_table_column_grouping()
+  .board_model <- .get_board_model()
+  .board_insets <- .get_board_insets()
   full_data <- .get_data(.column_grouping)
   dat <- shiny::reactiveVal(full_data)
 
@@ -82,7 +84,8 @@ app_server <- function(input, output, session) {
         input$filter_kilter_board_size,
         input$filter_tension1_board_size, input$filter_tension1_board_set,
         input$filter_tension2_board_size, input$filter_tension2_board_set,
-        input$filter_moonboard_board_set
+        input$filter_moonboard_board_set,
+        .board_model, .board_insets
       ) |>
       dat()
   }) |>

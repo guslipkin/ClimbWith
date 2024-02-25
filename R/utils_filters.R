@@ -76,40 +76,44 @@
     )
 }
 
-.make_board_name <- function(brand, model, size, set, default_size, default_set) {
-  has_size_set <- purrr::map_lgl(list(size, set), is.null)
-  if (all(has_size_set)) {
-      dt <-
-        tibble::tibble(
-          'brand' = NA_character_,
-          'model' = NA_character_,
-          'size' = NA_character_,
-          'set' = NA_character_
-        ) |>
-        utils::head(0)
-      return(dt)
-  } else if (any(has_size_set)) {
+.join_board_model <- function(.data, cols, .board_model) {
+  dplyr::inner_join(
+    x = dplyr::select(.data, tidyselect::all_of(cols)),
+    y = dplyr::select(.board_model, 'id', tidyselect::all_of(cols)),
+    by = cols
+  )
+}
+
+.make_board_name <- function(brand, model, size, set, default_size, default_set, .board_model, .board_insets) {
+  if (is.null(size) & is.null(set)) {
     dt <-
-      expand.grid(
-        'brand' = brand,
-        'model' = model,
-        'size' = `if`(is.null(size), default_size, size),
-        'set' = `if`(is.null(set), default_set, set)
+      tibble::tibble(
+        'brand' = NA_character_, 'model' = NA_character_,
+        'size' = NA_character_, 'set' = NA_character_
       ) |>
-      tibble::as_tibble() |>
-      utils::head(0) |>
-      purrr::map(as.character)
+      utils::head(0)
     return(dt)
   }
-  if (any(size != '')) {
-    size <-
-      size |>
-      janitor::make_clean_names() |>
-      stringr::str_sub(start = 2)
-  }
-  if (any(set != '')) set <- janitor::make_clean_names(set)
-  expand.grid('brand' = brand, 'model' = model, 'size' = size, 'set' = set) |>
-    tibble::as_tibble()
+  if (is.null(size)) size <- default_size
+  if (is.null(set)) set <- default_set
+
+  expand.grid('size' = size, 'set' = set) |>
+    dplyr::mutate(
+      'brand' = brand,
+      'model' = model
+    ) |>
+    .join_board_model(cols = .get_sictb_identifiers()[[brand]], .board_model) |>
+    dplyr::rename('contains' = 'id') |>
+    dplyr::inner_join(
+      y = .board_insets,
+      by = 'contains'
+    ) |>
+    dplyr::select('id') |>
+    unique() |>
+    dplyr::inner_join(
+      y = .board_model,
+      by = 'id'
+    )
 }
 
 .filter_sictb <- function(
@@ -117,74 +121,52 @@
     input_filter_kilter_board_size,
     input_filter_tension1_board_size, input_filter_tension1_board_set,
     input_filter_tension2_board_size, input_filter_tension2_board_set,
-    input_filter_moonboard_set
+    input_filter_moonboard_set,
+    .board_model, .board_insets
   ) {
 
   user_wants <-
     dplyr::bind_rows(
       .make_board_name(
-        'kilter', '', input_filter_kilter_board_size, '',
-        .get_kilter_size(), .get_kilter_set()
+        'Kilter', '', input_filter_kilter_board_size, NULL,
+        .get_kilter_size(), .get_kilter_set(), .board_model, .board_insets
       ),
       .make_board_name(
-        'tension', 'tension_1', input_filter_tension1_board_size, input_filter_tension1_board_set,
-        .get_tension1_size(), .get_tension1_set()
+        'Tension', '1', input_filter_tension1_board_size, input_filter_tension1_board_set,
+        .get_tension1_size(), .get_tension1_set(), .board_model, .board_insets
       ),
       .make_board_name(
-        'tension', 'tension_2', input_filter_tension2_board_size, input_filter_tension2_board_set,
-        .get_tension2_size(), .get_tension2_set()
+        'Tension', '2', input_filter_tension2_board_size, input_filter_tension2_board_set,
+        .get_tension2_size(), .get_tension2_set(), .board_model, .board_insets
       ),
       .make_board_name(
-        'moon', 'moon_board', '', input_filter_moonboard_set,
-        .get_moonboard_size(), .get_moonboard_set()
-      )
-    ) |>
-    dplyr::mutate(
-      'set' = ifelse(.data$brand == 'moon', stringr::str_replace(.data$set, '\\w', ''), .data$set)
+        'MoonBoard', '', NULL, input_filter_moonboard_set,
+        .get_moonboard_size(), .get_moonboard_set(), .board_model, .board_insets
+      ),
+      .id = 'board_id'
     )
   if (nrow(user_wants) == 0) return(.data)
 
-  board_types <-
-    dplyr::bind_rows(
-      'kilter' = {
-        .data |>
-          dplyr::select('name', tidyselect::matches('kilter_board')) |>
-          tidyr::pivot_longer(
-            cols = -'name',
-            names_to = c('brand', 'model', 'size', 'set'),
-            names_pattern = '(kilter)_board_()(\\d+x\\d+(_home)?)'
-          ) |>
-          dplyr::mutate('set' = '')
-      },
-      'tension' = {
-        .data |>
-          dplyr::select('name', tidyselect::matches('tension_board')) |>
-          tidyr::pivot_longer(
-            cols = -'name',
-            names_to = c('brand', 'model', 'size', 'set'),
-            names_pattern = '(tension)_board_(tension_[12])_(\\d{1,2}x\\d{1,2})_(.*)'
-          )
-      },
-      'moonboard' = {
-        .data |>
-          dplyr::select('name', tidyselect::matches('moon_board')) |>
-          tidyr::pivot_longer(
-            cols = -'name',
-            names_to = c('brand', 'model', 'size', 'set'),
-            names_pattern = '(moon)_board_(moon_board)_(mini)?_?(\\d{4})'
-          )
-      }
+  .data |>
+    dplyr::select('name', tidyselect::all_of(.board_model$column_name)) |>
+    tidyr::pivot_longer(
+      cols = -'name',
+      names_to = 'column_name',
+      values_to = 'angle'
     ) |>
-    dplyr::filter(!is.na(.data$value))
-
-  user_wants |>
-    dplyr::mutate('.brand_count' = length(unique(.data$brand))) |>
+    dplyr::filter(!is.na(.data$angle)) |>
     dplyr::inner_join(
-      y = board_types,
-      by = c('brand', 'model', 'size', 'set')
+      y = .board_model,
+      by = 'column_name'
     ) |>
+    dplyr::select('name', 'id') |> # ^gyms actually have
+    dplyr::inner_join(
+      y = user_wants,
+      by = 'id'
+    ) |>
+    dplyr::mutate('boards_needed' = length(unique(.data$board_id))) |>
     dplyr::filter(
-      length(unique(.data$brand)) == .data$.brand_count,
+      length(unique(.data$board_id)) == .data$boards_needed,
       .by = 'name'
     ) |>
     dplyr::select('name') |>
