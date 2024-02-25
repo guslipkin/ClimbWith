@@ -1,7 +1,5 @@
 .create_table <- function(.data) {
-  tab <- .data
-  tab <-
-    tab |>
+  .data |>
     dplyr::mutate(
       'full_name' = glue::glue("<a href='{.data$gym_website}' target='_blank'>{.data$full_name}</a>"),
       .by = 'full_name'
@@ -10,18 +8,19 @@
       dplyr::across(tidyselect::where(is.logical), \(x) ifelse(x, 'x', ''))
     ) |>
     dplyr::left_join(
-      y = .get_board_table(tab),
+      y = .get_board_table(.data),
       by = 'name'
     ) |>
     dplyr::select(
       'Gym Name' = 'full_name',
       'Bouldering' = 'bouldering', 'Top Rope' = 'top_rope', 'Lead' = 'lead',
-      'Auto Belay' = 'auto_belay',
+      'Auto Belay' = 'auto_belay', 'Speed' = 'speed',
+      'Treadwall' = 'treadwall',
       'Spray Wall', 'Kilter Board', 'Tension Board', 'MoonBoard',
       'Cardio Machines' = 'cardio_machines', 'Free Weights' = 'free_weights',
       'Weight Machines' = 'weight_machines', 'Yoga Studio' = 'yoga_studio'
-    )
-  .get_dt_table(tab)
+    ) |>
+    .get_dt_table()
 }
 
 .get_dt_table <- function(.data) {
@@ -33,7 +32,7 @@
           shiny::tags$thead(
             shiny::tags$tr(
               shiny::tags$th(rowspan = 2, 'Gym Name', style = 'vertical-align: bottom;'),
-              shiny::tags$th(colspan = 4, 'Climbing', style = 'text-align: center;'),
+              shiny::tags$th(colspan = 6, 'Climbing', style = 'text-align: center;'),
               shiny::tags$th(colspan = 4, 'Training Boards', style = 'text-align: center;'),
               shiny::tags$th(colspan = 4, 'Fitness', style = 'text-align: center;')
             ),

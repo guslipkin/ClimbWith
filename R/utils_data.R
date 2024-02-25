@@ -60,6 +60,7 @@
     ) |>
     dplyr::select(-tidyselect::all_of(column)) |>
     tidyr::unnest_longer('new_var') |>
+    dplyr::filter(.data$new_var != 'na') |>
     dplyr::bind_rows(
       tibble::tibble(
         'name' = NA_character_,
