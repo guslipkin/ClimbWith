@@ -27,7 +27,6 @@ app_ui <- function(request) {
         width = 12,
         status = 'primary',
         solidHeader = TRUE,
-        # maximizable = TRUE,
         leaflet::leafletOutput('map')
       ),
       bs4Dash::box(
@@ -84,6 +83,7 @@ app_ui <- function(request) {
               status = 'info',
               solidHeader = TRUE,
               collapsible = TRUE,
+              collapsed = TRUE,
               shiny::fluidRow(
                 shiny::column(
                   width = 6,
