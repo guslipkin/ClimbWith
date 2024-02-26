@@ -6,11 +6,18 @@
 #' @noRd
 app_server <- function(input, output, session) {
   shiny::updateActionButton(inputId = 'clear_filters', label = 'Clear Filters')
+  shiny::updateActionButton(
+    inputId = 'height_unit',
+    label = shiny::HTML('<img src="www/images/gear.svg"/>', ' Units: m')
+  )
   .column_grouping <- .get_table_column_grouping()
   .board_model <- .get_board_model()
   .board_insets <- .get_board_insets()
   full_data <- .get_data(.column_grouping)
   dat <- shiny::reactiveVal(full_data)
+  height_unit <- shiny::reactiveVal('m')
+  boulder_height <- shiny::reactiveVal()
+  rope_height <- shiny::reactiveVal()
 
   output$map <-
     dat() |>
@@ -22,11 +29,33 @@ app_server <- function(input, output, session) {
     DT::renderDT()
 
   shiny::observe({
-    if (is.null(input$table_columns))
+    if (height_unit() == 'm') height_unit('ft') else height_unit('m')
+    shiny::updateActionButton(
+      inputId = 'height_unit',
+      label = shiny::HTML('<img src="www/images/gear.svg"/>', glue::glue(' Units: {height_unit()}'))
+    )
+  }) |>
+    shiny::bindEvent(input$height_unit, ignoreInit = TRUE)
+
+  shiny::observe({
+    boulder_height(.get_height_range('boulder', height_unit()))
+    rope_height(.get_height_range('rope', height_unit()))
+    shinyWidgets::updateSliderTextInput(
+      session, inputId = 'filter_boulder_height', choices = boulder_height()
+    )
+    shinyWidgets::updateSliderTextInput(
+      session, inputId = 'filter_rope_height', choices = rope_height()
+    )
+  }) |>
+    shiny::bindEvent(height_unit(), ignoreInit = TRUE)
+
+  shiny::observe({
+    if (is.null(input$table_columns)) {
       shinyWidgets::updateCheckboxGroupButtons(
         inputId = 'table_columns',
         selected = names(.column_grouping)
       )
+    }
     wanted_cols <- .column_grouping[input$table_columns]
     DT::dataTableProxy('table') |>
       DT::showCols(
@@ -39,6 +68,16 @@ app_server <- function(input, output, session) {
   shiny::observe({
     shinyWidgets::updateAwesomeCheckboxGroup(session, inputId = 'filter_climbing', selected = FALSE)
     shinyWidgets::updateAwesomeCheckboxGroup(session, inputId = 'filter_fitness', selected = FALSE)
+    shinyWidgets::updateSliderTextInput(
+      session, inputId = 'filter_boulder_height',
+      choices = boulder_height(),
+      selected = boulder_height()[c(1, length(boulder_height()))]
+    )
+    shinyWidgets::updateSliderTextInput(
+      session, inputId = 'filter_rope_height',
+      choices = rope_height(),
+      selected = rope_height()[c(1, length(rope_height()))]
+    )
     shinyWidgets::updateSliderTextInput(
       session, inputId = 'filter_board_angle',
       choices = c('Adjustable', as.character(seq(0L, 90L, by = 5L))),
@@ -77,6 +116,7 @@ app_server <- function(input, output, session) {
   shiny::observe({
     full_data |>
       .filter_climbing(input$filter_climbing, .column_grouping$Climbing) |>
+      .filter_heights(input$filter_boulder_height, input$filter_rope_height, height_unit()) |>
       .filter_fitness(input$filter_fitness, .column_grouping$Fitness) |>
       .filter_board_angle(input$filter_board_angle) |>
       .filter_generic_board(input$filter_generic_board) |>
@@ -90,12 +130,15 @@ app_server <- function(input, output, session) {
       dat()
   }) |>
     shiny::bindEvent(
-      input$filter_climbing, input$filter_fitness,
+      input$filter_climbing,
+      input$filter_boulder_height, input$filter_rope_height,
+      input$filter_fitness,
       input$filter_board_angle, input$filter_generic_board,
       input$filter_kilter_board_size,
       input$filter_tension1_board_size, input$filter_tension1_board_set,
       input$filter_tension2_board_size, input$filter_tension2_board_set,
       input$filter_moonboard_board_set,
       ignoreNULL = FALSE, ignoreInit = TRUE
-    )
+    ) |>
+    shiny::debounce(300)
 }

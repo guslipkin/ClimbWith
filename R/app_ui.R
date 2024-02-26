@@ -44,7 +44,7 @@ app_ui <- function(request) {
         collapsed = TRUE,
         shiny::fluidRow(
           shiny::column(
-            width = 6,
+            width = 4,
             bs4Dash::box(
               title = 'Climbing',
               width = 12,
@@ -59,7 +59,7 @@ app_ui <- function(request) {
             )
           ),
           shiny::column(
-            width = 6,
+            width = 4,
             bs4Dash::box(
               title = 'Fitness',
               width = 12,
@@ -70,6 +70,39 @@ app_ui <- function(request) {
                 inputId = 'filter_fitness',
                 label = NULL,
                 choices = names(.column_grouping$Fitness)
+              )
+            )
+          ),
+          shiny::column(
+            width = 4,
+            bs4Dash::box(
+              title = 'Wall Heights',
+              width = 12,
+              status = 'info',
+              solidHeader = TRUE,
+              collapsible = FALSE,
+              dropdownMenu = bs4Dash::actionButton(
+                inputId = 'height_unit',
+                label = NULL,
+                status = 'warning',
+                size = 'xs',
+                icon = NULL, width = NULL
+              ),
+              shinyWidgets::sliderTextInput(
+                inputId = 'filter_boulder_height',
+                label = 'Bouldering',
+                choices = .get_height_range('boulder', 'm'),
+                selected = .get_height_range('boulder', 'm', TRUE),
+                force_edges = TRUE,
+                grid = TRUE
+              ),
+              shinyWidgets::sliderTextInput(
+                inputId = 'filter_rope_height',
+                label = 'Ropes',
+                choices = .get_height_range('rope', 'm'),
+                selected = .get_height_range('rope', 'm', TRUE),
+                force_edges = TRUE,
+                grid = TRUE
               )
             )
           )

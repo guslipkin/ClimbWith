@@ -31,6 +31,7 @@ golem::add_utils("data", with_test = FALSE)
 golem::add_utils("map", with_test = FALSE)
 golem::add_utils("table", with_test = FALSE)
 golem::add_utils("filters", with_test = FALSE)
+golem::add_fct("helpers", with_test = FALSE)
 
 ## External resources
 ## Creates .js and .css files at inst/app/www

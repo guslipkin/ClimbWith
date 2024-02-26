@@ -1,15 +1,47 @@
-.filter_climbing <- function(tab, input_filter_climbing, climbing) {
-  if (is.null(input_filter_climbing)) return(tab)
-  tab |>
+.filter_climbing <- function(.data, input_filter_climbing, climbing) {
+  if (is.null(input_filter_climbing)) return(.data)
+  .data |>
     dplyr::filter(
       dplyr::if_all(tidyselect::all_of(climbing[input_filter_climbing]))
     ) |>
     dplyr::select(.data$name) |>
     unique() |>
     dplyr::left_join(
-      y = tab,
+      y = .data,
       by = 'name'
     )
+}
+
+.check_range <- function(x, min_max) {
+  !is.na(x) & dplyr::between(x, min_max[1], min_max[2])
+}
+
+.filter_heights <- function(.data, input_filter_boulder_height, input_filter_rope_height, height_unit) {
+  if (height_unit == 'm') {
+    input_filter_boulder_height <- round(.meters_to_feet(input_filter_boulder_height), 0)
+    input_filter_rope_height <- round(.meters_to_feet(input_filter_rope_height), 0)
+  }
+  default_boulder <-
+    all(input_filter_boulder_height == .get_height_range('boulder', 'ft', TRUE))
+  default_rope <-
+    all(input_filter_rope_height == .get_height_range('rope', 'ft', TRUE))
+  if (default_boulder & default_rope) return(.data)
+
+  .data |>
+    dplyr::mutate(
+      '.boulder_in_range' =
+        .check_range(.data$bouldering_wall_height_ft, input_filter_boulder_height),
+      '.rope_in_range' =
+        .check_range(.data$rope_wall_height_ft, input_filter_rope_height)
+    ) |>
+    dplyr::filter(
+      (!.env$default_boulder & !.env$default_rope & .data$.rope_in_range & .data$.boulder_in_range)
+      |
+      (.env$default_boulder & !.env$default_rope & .data$.rope_in_range)
+      |
+      (!.env$default_boulder & .env$default_rope & .data$.boulder_in_range)
+    ) |>
+    dplyr::select(-'.boulder_in_range', -'.rope_in_range')
 }
 
 .filter_fitness <- function(.data, input_filter_fitness, fitness) {

@@ -17,3 +17,10 @@
     'MoonBoard' = c('brand', 'set')
   )
 }
+
+.get_height_range <- function(wall = c('boulder', 'rope'), units = c('ft', 'm'), min_max = FALSE) {
+  h <- if (wall == 'boulder') seq(2L, 7L, by = 1L) else seq(5L, 20L, by = 1L)
+  if (units == 'ft') h <- round(.meters_to_feet(h), 0)
+  if (min_max) h <- h[c(1, length(h))]
+  return(h)
+}
