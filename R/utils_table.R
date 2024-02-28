@@ -67,7 +67,7 @@
     ) |>
     dplyr::filter(!is.na(.data$angle)) |>
     dplyr::mutate(
-      'board' = .board_lookup(.data$board),
+      'board' = .board_lookup[.data$board],
       'angle' = dplyr::case_match(
         .data$angle,
         -2 ~ 'Unknown',

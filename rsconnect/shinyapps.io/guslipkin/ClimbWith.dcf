@@ -5,7 +5,7 @@ account: guslipkin
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 11251271
-bundleId: 8296759
+bundleId: 8302739
 url: https://guslipkin.shinyapps.io/ClimbWith/
 version: 1
 asMultiple: FALSE

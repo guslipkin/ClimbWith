@@ -10,10 +10,6 @@ app_server <- function(input, output, session) {
     inputId = 'height_unit',
     label = shiny::HTML('<img src="www/images/gear.svg"/>', ' Units: m')
   )
-  .column_grouping <- .get_table_column_grouping()
-  .board_model <- .get_board_model()
-  .board_insets <- .get_board_insets()
-  full_data <- .get_data(.column_grouping)
   dat <- shiny::reactiveVal(full_data)
   height_unit <- shiny::reactiveVal('m')
   boulder_height <- shiny::reactiveVal()
