@@ -5,17 +5,26 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
+  loading_message <-
+    c('Chalking up', 'Brushing holds', 'Tying in', 'Flaking rope') |>
+    sample() |>
+    utils::head(1)
   bs4Dash::dashboardPage(
     scrollToTop = TRUE,
     dark = NULL,
-    preloader = list(html = shiny::tagList(waiter::spin_1(), "Loading ..."), color = "#3c8dbc"),
+    preloader = list(
+      html = shiny::tagList(
+        waiter::spin_cube_grid(),
+        shiny::tags$b(glue::glue("{loading_message} ..."))
+      ),
+      color = "#3c8dbc"
+    ),
     header = bs4Dash::bs4DashNavbar(
       status = 'lightblue',
       title = bs4Dash::dashboardBrand(
         title = 'ClimbWith',
         color = 'lightblue'
-      )
-      ,
+      ),
       shiny::tags$head(
         shiny::tags$style(
           shiny::HTML(glue::glue("
@@ -350,6 +359,20 @@ app_ui <- function(request) {
               class = 'bg-danger',
               style = 'width: 100%;',
               onclick = "window.open('https://github.com/guslipkin/ClimbWith/issues', '_blank')"
+            )
+          )
+        ),
+        shiny::tags$br(),
+        shiny::fluidRow(
+          shiny::column(
+            width = 12,
+            shiny::actionButton(
+              inputId = 'visit_gus',
+              htmltools::img(src = 'www/images/info-circle.svg'), ' About (G)us',
+              icon = NULL, width = NULL,
+              class = 'bg-info',
+              style = 'width: 100%;',
+              onclick = "window.open('https://guslipkin.me', '_blank')"
             )
           )
         )

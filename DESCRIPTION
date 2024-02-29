@@ -7,8 +7,8 @@ License: What license is it under?
 Imports: 
     config (>= 0.3.2),
     golem (>= 0.4.1),
-    rlang,
     shiny (>= 1.8.0),
+    rlang,
     DT,
     bs4Dash,
     dplyr,

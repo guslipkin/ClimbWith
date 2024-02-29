@@ -13,7 +13,7 @@
     grDevices::heat.colors() |>
     `names<-`(c(names(sort_tab[sort_tab > 0]), '0'))
 
-  full_range <- seq(head(height_range, 1), tail(height_range, 1))
+  full_range <- seq(utils::head(height_range, 1), utils::tail(height_range, 1))
   sort_tab |>
     names() |>
     append(full_range[!(full_range %in% x)]) |>
