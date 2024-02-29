@@ -15,3 +15,12 @@ button.btn.checkbtn.btn-table-columns {
 .btn-group.btn-group-toggle.w-100 {
     padding: 0 .5rem 0 .5rem;
 }
+
+.irs--shiny .irs-bar {
+    background: #FFFFFF00;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+}
+
+.irs--shiny .irs-line { height: 10px; }
+.irs--shiny .irs-bar { height: 10px; }

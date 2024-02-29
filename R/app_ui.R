@@ -5,17 +5,28 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
-  .column_grouping <- .get_table_column_grouping()
   bs4Dash::dashboardPage(
     scrollToTop = TRUE,
     dark = NULL,
-    help = NULL,
     preloader = list(html = shiny::tagList(waiter::spin_1(), "Loading ..."), color = "#3c8dbc"),
     header = bs4Dash::bs4DashNavbar(
       status = 'lightblue',
       title = bs4Dash::dashboardBrand(
         title = 'ClimbWith',
         color = 'lightblue'
+      )
+      ,
+      shiny::tags$head(
+        shiny::tags$style(
+          shiny::HTML(glue::glue("
+            .filter_boulder_height .irs--shiny .irs-line {
+              background: linear-gradient(90deg, [.get_color_scale(full_data$bouldering_wall_height_ft, .get_height_range('boulder', 'ft'))]);
+            }
+            .filter_rope_height .irs--shiny .irs-line {
+              background: linear-gradient(90deg, [.get_color_scale(full_data$rope_wall_height_ft, .get_height_range('rope', 'ft'))]);
+            }
+          ", .open = '[', .close = ']'))
+        )
       )
     ),
     sidebar = bs4Dash::dashboardSidebar(
@@ -61,21 +72,6 @@ app_ui <- function(request) {
           shiny::column(
             width = 4,
             bs4Dash::box(
-              title = 'Fitness',
-              width = 12,
-              status = 'info',
-              solidHeader = TRUE,
-              collapsible = FALSE,
-              shinyWidgets::awesomeCheckboxGroup(
-                inputId = 'filter_fitness',
-                label = NULL,
-                choices = names(.column_grouping$Fitness)
-              )
-            )
-          ),
-          shiny::column(
-            width = 4,
-            bs4Dash::box(
               title = 'Wall Heights',
               width = 12,
               status = 'info',
@@ -88,21 +84,48 @@ app_ui <- function(request) {
                 size = 'xs',
                 icon = NULL, width = NULL
               ),
-              shinyWidgets::sliderTextInput(
-                inputId = 'filter_boulder_height',
-                label = 'Bouldering',
-                choices = .get_height_range('boulder', 'm'),
-                selected = .get_height_range('boulder', 'm', TRUE),
-                force_edges = TRUE,
-                grid = TRUE
+              shiny::div(
+                class = 'filter_boulder_height',
+                bs4Dash::tooltip(
+                  shinyWidgets::sliderTextInput(
+                    inputId = 'filter_boulder_height',
+                    label = 'Bouldering',
+                    choices = .get_height_range('boulder', 'm'),
+                    selected = .get_height_range('boulder', 'm', TRUE),
+                    force_edges = TRUE,
+                    grid = TRUE
+                  ),
+                  title = 'Colors represent how common that height is'
+                )
               ),
-              shinyWidgets::sliderTextInput(
-                inputId = 'filter_rope_height',
-                label = 'Ropes',
-                choices = .get_height_range('rope', 'm'),
-                selected = .get_height_range('rope', 'm', TRUE),
-                force_edges = TRUE,
-                grid = TRUE
+              shiny::div(
+                class = 'filter_rope_height',
+                bs4Dash::tooltip(
+                  shinyWidgets::sliderTextInput(
+                    inputId = 'filter_rope_height',
+                    label = 'Ropes',
+                    choices = .get_height_range('rope', 'm'),
+                    selected = .get_height_range('rope', 'm', TRUE),
+                    force_edges = TRUE,
+                    grid = TRUE
+                  ),
+                  title = 'Colors represent how common that height is'
+                )
+              )
+            )
+          ),
+          shiny::column(
+            width = 4,
+            bs4Dash::box(
+              title = 'Fitness',
+              width = 12,
+              status = 'info',
+              solidHeader = TRUE,
+              collapsible = FALSE,
+              shinyWidgets::awesomeCheckboxGroup(
+                inputId = 'filter_fitness',
+                label = NULL,
+                choices = names(.column_grouping$Fitness)
               )
             )
           )
@@ -274,11 +297,11 @@ app_ui <- function(request) {
         status = 'primary',
         solidHeader = TRUE,
         shinyWidgets::checkboxGroupButtons(
-          inputId = "table_columns",
+          inputId = 'table_columns',
           label = NULL,
-          choices = c('Climbing', 'Training Boards', 'Fitness'),
+          choices = c('Stats', 'Climbing', 'Training Boards', 'Fitness'),
           selected = c('Climbing', 'Training Boards', 'Fitness'),
-          status = "table-columns",
+          status = 'table-columns',
           justified = TRUE,
           individual = TRUE,
           checkIcon = list(
