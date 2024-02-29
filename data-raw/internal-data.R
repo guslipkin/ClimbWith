@@ -1,7 +1,7 @@
 .column_grouping <-
   readr::read_csv('data-raw/column_grouping.csv', show_col_types = FALSE) |>
   tidyr::pivot_wider(names_from = 'columnGroup', values_from = 'activity') |>
-  dplyr::select('Climbing', 'Training Boards', 'Fitness') |>
+  dplyr::select('Stats', 'Climbing', 'Training Boards', 'Fitness') |>
   suppressWarnings() |>
   as.list() |>
   unlist(recursive = FALSE) |>
@@ -79,6 +79,11 @@ full_data <-
     })
   ) |>
   dplyr::mutate(
+    'bouldering_wall_height_m' = .data$bouldering_wall_height_ft* .3048,
+    'rope_wall_height_m' = .data$rope_wall_height_ft * .3048,
+    .after = 'rope_wall_height_ft'
+  ) |>
+  dplyr::mutate(
     'full_name' = .data$gym_name,
     'name' = janitor::make_clean_names(.data$gym_name),
     .before = 1
@@ -135,3 +140,4 @@ usethis::use_data(
   internal = TRUE,
   overwrite = TRUE
 )
+

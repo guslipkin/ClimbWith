@@ -13,6 +13,10 @@
     ) |>
     dplyr::select(
       'Gym Name' = 'full_name',
+      'Boulder Height (ft)' = 'bouldering_wall_height_ft',
+      'Rope Height (ft)' = 'rope_wall_height_ft',
+      'Boulder Height (m)' = 'bouldering_wall_height_m',
+      'Rope Height (m)' = 'rope_wall_height_m',
       'Bouldering' = 'bouldering', 'Top Rope' = 'top_rope', 'Lead' = 'lead',
       'Auto Belay' = 'auto_belay', 'Speed' = 'speed',
       'Treadwall' = 'treadwall',
@@ -25,6 +29,11 @@
 
 .get_dt_table <- function(.data) {
   .data |>
+    dplyr::mutate(
+      dplyr::across(
+        tidyselect::matches('Height'), \(x) round(x, digits = 1)
+      )
+    ) |>
     DT::datatable(
       container = htmltools::withTags(
         shiny::tags$table(
@@ -32,6 +41,7 @@
           shiny::tags$thead(
             shiny::tags$tr(
               shiny::tags$th(rowspan = 2, 'Gym Name', style = 'vertical-align: bottom;'),
+              shiny::tags$th(colspan = 4, 'Stats', style = 'text-align: center;'),
               shiny::tags$th(colspan = 6, 'Climbing', style = 'text-align: center;'),
               shiny::tags$th(colspan = 4, 'Training Boards', style = 'text-align: center;'),
               shiny::tags$th(colspan = 4, 'Fitness', style = 'text-align: center;')

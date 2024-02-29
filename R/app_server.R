@@ -46,22 +46,6 @@ app_server <- function(input, output, session) {
     shiny::bindEvent(height_unit(), ignoreInit = TRUE)
 
   shiny::observe({
-    if (is.null(input$table_columns)) {
-      shinyWidgets::updateCheckboxGroupButtons(
-        inputId = 'table_columns',
-        selected = names(.column_grouping)
-      )
-    }
-    wanted_cols <- .column_grouping[input$table_columns]
-    DT::dataTableProxy('table') |>
-      DT::showCols(
-        c(0, which(unlist(.column_grouping) %in% unlist(wanted_cols))),
-        reset = TRUE
-      )
-  }) |>
-    shiny::bindEvent(input$table_columns, ignoreNULL = FALSE)
-
-  shiny::observe({
     shinyWidgets::updateAwesomeCheckboxGroup(session, inputId = 'filter_climbing', selected = FALSE)
     shinyWidgets::updateAwesomeCheckboxGroup(session, inputId = 'filter_fitness', selected = FALSE)
     shinyWidgets::updateSliderTextInput(
@@ -137,4 +121,25 @@ app_server <- function(input, output, session) {
       ignoreNULL = FALSE, ignoreInit = TRUE
     ) |>
     shiny::debounce(300)
+
+  shiny::observe({
+    if (is.null(input$table_columns)) {
+      shinyWidgets::updateCheckboxGroupButtons(
+        inputId = 'table_columns',
+        selected = c('Climbing', 'Training Boards', 'Fitness')
+      )
+    }
+    wanted_cols <- .column_grouping[input$table_columns]
+    if (!is.null(wanted_cols$Stats)) {
+      wanted_cols$Stats <-
+        wanted_cols$Stats[!grepl(glue::glue('height_{height_unit()}'), wanted_cols$Stats)]
+    }
+
+    DT::dataTableProxy('table') |>
+      DT::showCols(
+        c(0, which(unlist(.column_grouping) %in% unlist(wanted_cols))),
+        reset = TRUE
+      )
+  }) |>
+    shiny::bindEvent(input$table_columns, height_unit(), dat(), ignoreNULL = FALSE, ignoreInit = FALSE)
 }

@@ -1,4 +1,8 @@
 columnGroup,activity
+Stats,Boulder Height (m)
+Stats,Rope Height (m)
+Stats,Boulder Height (ft)
+Stats,Rope Height (ft)
 Climbing,Auto Belay
 Climbing,Bouldering
 Climbing,Lead
