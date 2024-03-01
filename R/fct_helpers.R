@@ -7,11 +7,16 @@
     table() |>
     sort(decreasing = TRUE)
 
+  x_0 <- c(sort_tab[sort_tab > 0], '0' = 0)
   col <-
-    c(sort_tab[sort_tab > 0], '0' = 0) |>
+    x_0 |>
+    unique() |>
     length() |>
     grDevices::heat.colors() |>
-    `names<-`(c(names(sort_tab[sort_tab > 0]), '0'))
+    `names<-`(unique(x_0))
+  col <-
+    col[as.character(x_0)] |>
+    `names<-`(names(x_0))
 
   full_range <- seq(utils::head(height_range, 1), utils::tail(height_range, 1))
   sort_tab |>
