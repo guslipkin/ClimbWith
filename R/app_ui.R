@@ -347,7 +347,7 @@ app_ui <- function(request) {
               icon = NULL, width = NULL,
               class = 'bg-warning',
               style = 'width: 100%;',
-              onclick = "window.open('mailto:climbwith@guslipkin.me?subject=ClimbWith', '_blank')"
+              onclick = "window.open('mailto:gus@climbwith.info?subject=ClimbWith', '_blank')"
             )
           ),
           shiny::column(

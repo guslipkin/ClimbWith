@@ -1,7 +1,7 @@
 Package: ClimbWith
 Title: Find Rock Climbing Gyms
 Version: 0.0.0.9000
-Authors@R: person('Gus', 'Lipkin', email = 'climbwith@guslipkin.me', role = c('cre', 'aut'))
+Authors@R: person('Gus', 'Lipkin', email = 'gus@climbwith.info', role = c('cre', 'aut'))
 Description: Look for rock climbing gyms based on features you want
 License: What license is it under?
 Imports: 

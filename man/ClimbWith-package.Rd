@@ -9,7 +9,7 @@
 Look for rock climbing gyms based on features you want
 }
 \author{
-\strong{Maintainer}: Gus Lipkin \email{climbwith@guslipkin.me}
+\strong{Maintainer}: Gus Lipkin \email{gus@climbwith.info}
 
 }
 \keyword{internal}
