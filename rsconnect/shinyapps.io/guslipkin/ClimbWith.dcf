@@ -5,9 +5,9 @@ account: guslipkin
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 11251271
-bundleId: 8329936
+bundleId: 8341686
 url: https://guslipkin.shinyapps.io/ClimbWith/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .dockerignore|.gitattributes|.here|.Rbuildignore|Dockerfile|man/ClimbWith-package.Rd|man/run_app.Rd
+ignoredFiles: .dockerignore|.gitattributes|.here|.Rbuildignore|man/ClimbWith-package.Rd|man/run_app.Rd

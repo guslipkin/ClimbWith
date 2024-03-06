@@ -34,7 +34,11 @@ app_ui <- function(request) {
             .filter_rope_height .irs--shiny .irs-line {
               background: linear-gradient(90deg, [.get_color_scale(full_data$rope_wall_height_ft, .get_height_range('rope', 'ft'))]);
             }
+            .filter_board_angle .irs--shiny .irs-bar { background: black; }
           ", .open = '[', .close = ']'))
+          # .filter_board_angle .irs--shiny .irs-line {
+          #   background: linear-gradient(90deg, [.get_color_scale(full_data |> dplyr::select(tidyselect::matches('_board_')) |> unlist() |> na.omit() |> sort(), (-1):90)]);
+          # }
         )
       )
     ),
@@ -157,13 +161,16 @@ app_ui <- function(request) {
                     width = 12,
                     collapsible = FALSE,
                     shiny::tags$p('An angle of 0\u00B0 is a vertical wall and 90\u00B0 is a horizontal wall.'),
-                    shinyWidgets::sliderTextInput(
-                      inputId = 'filter_board_angle',
-                      label = NULL,
-                      choices = c('Adjustable', as.character(seq(0L, 90L, by = 5L))),
-                      selected = c('Adjustable', '90'),
-                      force_edges = TRUE,
-                      grid = TRUE
+                    shiny::div(
+                      class = 'filter_board_angle',
+                      shinyWidgets::sliderTextInput(
+                        inputId = 'filter_board_angle',
+                        label = NULL,
+                        choices = c('Adjustable', as.character(seq(0L, 90L, by = 5L))),
+                        selected = c('Adjustable', '90'),
+                        force_edges = TRUE,
+                        grid = TRUE
+                      )
                     )
                   )
                 ),
