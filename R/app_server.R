@@ -142,4 +142,7 @@ app_server <- function(input, output, session) {
       )
   }) |>
     shiny::bindEvent(input$table_columns, height_unit(), dat(), ignoreNULL = FALSE, ignoreInit = FALSE)
+
+  shiny::observe({ show_about_us() }) |>
+    shiny::bindEvent(input$visit_gus)
 }

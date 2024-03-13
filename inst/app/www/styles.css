@@ -24,3 +24,7 @@ button.btn.checkbtn.btn-table-columns {
 
 .irs--shiny .irs-line { height: 10px; }
 .irs--shiny .irs-bar { height: 10px; }
+
+a:hover, a:focus {
+    text-decoration: underline;
+}

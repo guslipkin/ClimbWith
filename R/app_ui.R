@@ -375,11 +375,10 @@ app_ui <- function(request) {
             width = 12,
             shiny::actionButton(
               inputId = 'visit_gus',
-              htmltools::img(src = 'www/images/info-circle.svg'), ' About (G)us',
+              htmltools::img(src = 'www/images/info-circle.svg'), ' About Us',
               icon = NULL, width = NULL,
               class = 'bg-info',
-              style = 'width: 100%;',
-              onclick = "window.open('https://guslipkin.me', '_blank')"
+              style = 'width: 100%;'
             )
           )
         )

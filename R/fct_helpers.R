@@ -1,6 +1,18 @@
 .meters_to_feet <- function(x) { (x * 3.28084) }
 .feet_to_meters <- function(x) { (x * .3048) }
 
+.get_tag_link <- function(link, text) {
+  shiny::tags$a(
+    href = link,
+    text,
+    shiny::tags$sup(htmltools::img(
+      src = 'www/images/box-arrow-up-right.svg', width = '1.75%'
+    )),
+    target = '_blank',
+    style = 'color: inherit;'
+  )
+}
+
 .get_color_scale <- function(x, height_range) {
   sort_tab <-
     x |>
