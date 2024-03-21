@@ -78,12 +78,17 @@
     dplyr::filter(!is.na(.data$angle)) |>
     dplyr::mutate(
       'board' = .board_lookup[.data$board],
-      'angle' = dplyr::case_match(
-        .data$angle,
-        -2 ~ 'Unknown',
-        -1 ~ 'Adjustable',
-        .default = as.character(.data$angle)
-      )
+      'angle' = purrr::map_chr(.data$angle, \(x) {
+        x |>
+          as.character() |>
+          dplyr::case_match(
+            '-2' ~ 'Unknown',
+            '-1' ~ 'Adjustable',
+            .default = as.character(x)
+          ) |>
+          .drop_na() |>
+          paste0(collapse = ', ')
+      })
     ) |>
     dplyr::mutate(
       'brand' = stringr::str_extract(.data$board, '^(\\w+)'),

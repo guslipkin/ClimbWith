@@ -12,10 +12,6 @@
     )
 }
 
-.check_range <- function(x, min_max) {
-  !is.na(x) & dplyr::between(x, min_max[1], min_max[2])
-}
-
 .filter_heights <- function(.data, input_filter_boulder_height, input_filter_rope_height, height_unit) {
   if (height_unit == 'm') {
     input_filter_boulder_height <- round(.meters_to_feet(input_filter_boulder_height), 0)
@@ -67,17 +63,15 @@
     suppressWarnings()
   .data |>
     dplyr::select('name', tidyselect::matches('_board_|spray_wall')) |>
-    dplyr::select(
-      'name',
-      tidyselect::where(
+    dplyr::filter(
+      dplyr::if_any(
+        tidyselect::matches('_board_|spray_wall'),
         \(x) {
-          x <- as.integer(x) |> suppressWarnings()
-          any(!is.na(x) & (x == -2 | dplyr::between(x, board_angle[1], board_angle[2])))
+          purrr::map_lgl(x, \(y) {
+            all(.check_range(y, board_angle) | isTRUE(y == -1))
+          })
         }
       )
-    ) |>
-    dplyr::filter(
-      dplyr::if_any(tidyselect::matches('_board_|spray_wall'), \(x) !is.na(x))
     ) |>
     dplyr::select(.data$name) |>
     unique() |>

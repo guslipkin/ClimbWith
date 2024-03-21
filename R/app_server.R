@@ -98,7 +98,6 @@ app_server <- function(input, output, session) {
       .filter_climbing(input$filter_climbing, .column_grouping$Climbing) |>
       .filter_heights(input$filter_boulder_height, input$filter_rope_height, height_unit()) |>
       .filter_fitness(input$filter_fitness, .column_grouping$Fitness) |>
-      .filter_board_angle(input$filter_board_angle) |>
       .filter_generic_board(input$filter_generic_board) |>
       .filter_sictb(
         input$filter_kilter_board_size,
@@ -107,6 +106,7 @@ app_server <- function(input, output, session) {
         input$filter_moonboard_board_set,
         .board_model, .board_insets
       ) |>
+      .filter_board_angle(input$filter_board_angle) |>
       dat()
   }) |>
     shiny::bindEvent(
@@ -145,4 +145,6 @@ app_server <- function(input, output, session) {
 
   shiny::observe({ show_about_us() }) |>
     shiny::bindEvent(input$visit_gus)
+
+  shiny::observe({ shiny::invalidateLater(1e4) })
 }

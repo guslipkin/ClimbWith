@@ -59,7 +59,8 @@ full_data <-
           x == 'Adjustable' ~ '-1',
           .default = as.character(x)
         ) |>
-          as.integer()
+          stringr::str_split(', ') |>
+          purrr::map(as.integer)
       }
     ),
     dplyr::across(
