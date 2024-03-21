@@ -82,7 +82,7 @@ app_server <- function(input, output, session) {
     if (nrow(dt) == 0) show_no_matches()
   }) |>
     shiny::bindEvent(
-      input$table_rows_selected, ignoreNULL = FALSE, ignoreInit = TRUE
+      dat(), input$table_rows_selected, ignoreNULL = FALSE, ignoreInit = FALSE
     )
 
   shiny::observe({
