@@ -374,7 +374,7 @@ app_ui <- function(request) {
           shiny::column(
             width = 12,
             shiny::actionButton(
-              inputId = 'visit_gus',
+              inputId = 'about_us',
               htmltools::img(src = 'www/images/info-circle.svg'), ' About Us',
               icon = NULL, width = NULL,
               class = 'bg-info',

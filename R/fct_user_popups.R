@@ -1,26 +1,10 @@
-#' user_popups
-#'
-#' @description A fct function
-#'
-#' @return The return value, if any, from executing the function.
-#'
-#' @noRd
-# .make_contributor <- function(name, bio, website = NULL, image = NULL) {
-#   if (!is.null(website)) {
-#     name <-
-#       shiny::tags$h4(
-#         shiny::tags$a(
-#           href = website,
-#           name,
-#           shiny::tags$sup(
-#             htmltools::img(src = 'www/images/box-arrow-up-right.svg', width = '1.75%')
-#           ),
-#           target = '_blank',
-#           style = 'color: inherit;'
-#         )
-#       )
-#   }
-# }
+show_no_matches <- function() {
+  shinyWidgets::show_alert(
+    title = 'No Matches',
+    text = 'No gyms match your filters',
+    type = 'warning'
+  )
+}
 
 show_about_us <- function() {
   shinyWidgets::show_alert(

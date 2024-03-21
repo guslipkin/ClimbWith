@@ -11,9 +11,11 @@ app_server <- function(input, output, session) {
     label = shiny::HTML('<img src="www/images/gear.svg"/>', ' Units: m')
   )
   dat <- shiny::reactiveVal(full_data)
+  selected_dat <- shiny::reactiveVal(full_data)
   height_unit <- shiny::reactiveVal('m')
   boulder_height <- shiny::reactiveVal()
   rope_height <- shiny::reactiveVal()
+  map_zoom <- shiny::reactiveVal()
 
   output$map <-
     dat() |>
@@ -73,25 +75,46 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(input$clear_filters, ignoreNULL = TRUE, ignoreInit = FALSE)
 
+
   shiny::observe({
     dt <- if (is.null(input$table_rows_selected)) dat() else dat()[input$table_rows_selected,]
-    if (nrow(dt) == 0) {
-      shinyWidgets::show_alert(
-        title = 'No Matches',
-        text = 'No gyms match your filters',
-        type = 'warning'
-      )
-    }
+    selected_dat(dt)
+    if (nrow(dt) == 0) show_no_matches()
+  }) |>
+    shiny::bindEvent(
+      input$table_rows_selected, ignoreNULL = FALSE, ignoreInit = TRUE
+    )
 
-    b <- .get_bounds(dt)
-    leaflet::leafletProxy('map', data = dt) |>
-      .add_markers_and_fit(dt) |>
+  shiny::observe({
+    b <- .get_bounds(selected_dat())
+    leaflet::leafletProxy('map', data = selected_dat()) |>
       leaflet::fitBounds(
         b[1], b[2], b[3], b[4],
-        options = list('maxZoom' = 12, 'padding' = c(15, 15))
-      )
+        options = list('maxZoom' = 12, 'padding' = rep(24, 2))
+      ) |>
+      .add_markers(selected_dat(), cluster = isTRUE(input$map_zoom < 10))
+    map_zoom(input$map_zoom)
   }) |>
-    shiny::bindEvent(dat(), input$table_rows_selected, ignoreNULL = FALSE, ignoreInit = TRUE)
+    shiny::bindEvent(
+      dat(), selected_dat(), ignoreNULL = FALSE, ignoreInit = TRUE
+    )
+
+  shiny::observe({
+    if (is.null(map_zoom())) map_zoom(input$map_zoom)
+    if (input$map_zoom >= 10 & map_zoom() < 10) {
+      cluster <- FALSE
+    } else if (input$map_zoom < 10 & map_zoom() >= 10) {
+      cluster <- TRUE
+    } else {
+      cluster <- NULL
+    }
+    map_zoom(input$map_zoom)
+    if (!is.null(cluster)) {
+      leaflet::leafletProxy('map', data = selected_dat()) |>
+        .add_markers(selected_dat(), cluster = cluster)
+    }
+  }) |>
+    shiny::bindEvent(input$map_zoom, ignoreInit = TRUE, ignoreNULL = TRUE)
 
   shiny::observe({
     full_data |>
@@ -144,7 +167,7 @@ app_server <- function(input, output, session) {
     shiny::bindEvent(input$table_columns, height_unit(), dat(), ignoreNULL = FALSE, ignoreInit = FALSE)
 
   shiny::observe({ show_about_us() }) |>
-    shiny::bindEvent(input$visit_gus)
+    shiny::bindEvent(input$about_us)
 
   shiny::observe({ shiny::invalidateLater(1e4) })
 }

@@ -47,13 +47,13 @@
     #     )
     #   )
     # ) |>
-    .add_markers_and_fit(.data)
+    .add_markers(.data)
 }
 
-.add_markers_and_fit <- function(map, .data) {
-  b <- .get_bounds(.data)
+.add_markers <- function(map, data, cluster = TRUE) {
+  cluster_options <- if (cluster) leaflet::markerClusterOptions() else NULL
   labels <-
-    .data |>
+    data |>
     dplyr::mutate('.id' = dplyr::row_number()) |>
     dplyr::mutate(
       'label' = shiny::HTML(
@@ -68,14 +68,12 @@
     dplyr::pull(.data$label)
   map |>
     leaflet::clearMarkers() |>
+    leaflet::clearMarkerClusters() |>
     leaflet::clearPopups() |>
     leaflet::addMarkers(
       lng = ~ lon,
       lat = ~ lat,
-      popup = labels
+      popup = labels,
+      clusterOptions = cluster_options
     )
-    # leaflet::fitBounds(
-    #   b[1], b[2], b[3], b[4],
-    #   options = list('maxZoom' = 12, 'padding' = c(15, 15))
-    # )
 }
