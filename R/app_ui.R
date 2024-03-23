@@ -51,6 +51,12 @@ app_ui <- function(request) {
         width = 12,
         status = 'primary',
         solidHeader = TRUE,
+        dropdownMenu = bs4Dash::actionButton(
+          inputId = 'toggle_clusters',
+          label = NULL,
+          status = 'warning',
+          size = 'xs'
+        ),
         leaflet::leafletOutput('map')
       ),
       bs4Dash::box(

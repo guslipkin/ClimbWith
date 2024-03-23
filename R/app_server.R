@@ -10,12 +10,20 @@ app_server <- function(input, output, session) {
     inputId = 'height_unit',
     label = shiny::HTML('<img src="www/images/gear.svg"/>', ' Units: m')
   )
+  shiny::updateActionButton(
+    inputId = 'toggle_clusters',
+    label = shiny::HTML(
+      '<img src="www/images/toggle-on.svg"/>', 'Toggle Clusters'
+    )
+  )
   dat <- shiny::reactiveVal(full_data)
   selected_dat <- shiny::reactiveVal(full_data)
   height_unit <- shiny::reactiveVal('m')
   boulder_height <- shiny::reactiveVal()
   rope_height <- shiny::reactiveVal()
   map_zoom <- shiny::reactiveVal()
+  stop_clusters_default <- 11
+  stop_clusters <- shiny::reactiveVal(stop_clusters_default)
 
   output$map <-
     dat() |>
@@ -27,25 +35,22 @@ app_server <- function(input, output, session) {
     DT::renderDT()
 
   shiny::observe({
-    if (height_unit() == 'm') height_unit('ft') else height_unit('m')
+    if (stop_clusters() == stop_clusters_default) {
+      stop_clusters(Inf)
+      status <- 'off'
+    } else {
+      stop_clusters(stop_clusters_default)
+      status <- 'on'
+    }
     shiny::updateActionButton(
-      inputId = 'height_unit',
-      label = shiny::HTML('<img src="www/images/gear.svg"/>', glue::glue(' Units: {height_unit()}'))
+      inputId = 'toggle_clusters',
+      label = shiny::HTML(
+        glue::glue('<img src="www/images/toggle-{status}.svg"/>'),
+        'Toggle Clusters'
+      )
     )
   }) |>
-    shiny::bindEvent(input$height_unit, ignoreInit = TRUE)
-
-  shiny::observe({
-    boulder_height(.get_height_range('boulder', height_unit()))
-    rope_height(.get_height_range('rope', height_unit()))
-    shinyWidgets::updateSliderTextInput(
-      session, inputId = 'filter_boulder_height', choices = boulder_height()
-    )
-    shinyWidgets::updateSliderTextInput(
-      session, inputId = 'filter_rope_height', choices = rope_height()
-    )
-  }) |>
-    shiny::bindEvent(height_unit(), ignoreInit = TRUE)
+    shiny::bindEvent(input$toggle_clusters)
 
   shiny::observe({
     shinyWidgets::updateAwesomeCheckboxGroup(session, inputId = 'filter_climbing', selected = FALSE)
@@ -75,6 +80,26 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(input$clear_filters, ignoreNULL = TRUE, ignoreInit = FALSE)
 
+  shiny::observe({
+    if (height_unit() == 'm') height_unit('ft') else height_unit('m')
+    shiny::updateActionButton(
+      inputId = 'height_unit',
+      label = shiny::HTML('<img src="www/images/gear.svg"/>', glue::glue(' Units: {height_unit()}'))
+    )
+  }) |>
+    shiny::bindEvent(input$height_unit, ignoreInit = TRUE)
+
+  shiny::observe({
+    boulder_height(.get_height_range('boulder', height_unit()))
+    rope_height(.get_height_range('rope', height_unit()))
+    shinyWidgets::updateSliderTextInput(
+      session, inputId = 'filter_boulder_height', choices = boulder_height()
+    )
+    shinyWidgets::updateSliderTextInput(
+      session, inputId = 'filter_rope_height', choices = rope_height()
+    )
+  }) |>
+    shiny::bindEvent(height_unit(), ignoreInit = TRUE)
 
   shiny::observe({
     dt <- if (is.null(input$table_rows_selected)) dat() else dat()[input$table_rows_selected,]
@@ -92,7 +117,7 @@ app_server <- function(input, output, session) {
         b[1], b[2], b[3], b[4],
         options = list('maxZoom' = 12, 'padding' = rep(24, 2))
       ) |>
-      .add_markers(selected_dat(), cluster = isTRUE(input$map_zoom < 10))
+      .add_markers(selected_dat(), cluster = isTRUE(input$map_zoom < stop_clusters()))
     map_zoom(input$map_zoom)
   }) |>
     shiny::bindEvent(
@@ -101,9 +126,9 @@ app_server <- function(input, output, session) {
 
   shiny::observe({
     if (is.null(map_zoom())) map_zoom(input$map_zoom)
-    if (input$map_zoom >= 10 & map_zoom() < 10) {
+    if (stop_clusters() == Inf | (input$map_zoom >= stop_clusters() & map_zoom() < stop_clusters())) {
       cluster <- FALSE
-    } else if (input$map_zoom < 10 & map_zoom() >= 10) {
+    } else if (input$map_zoom < stop_clusters()) {
       cluster <- TRUE
     } else {
       cluster <- NULL
@@ -114,7 +139,10 @@ app_server <- function(input, output, session) {
         .add_markers(selected_dat(), cluster = cluster)
     }
   }) |>
-    shiny::bindEvent(input$map_zoom, ignoreInit = TRUE, ignoreNULL = TRUE)
+    shiny::bindEvent(
+      input$map_zoom, stop_clusters(),
+      ignoreInit = TRUE, ignoreNULL = TRUE
+    )
 
   shiny::observe({
     full_data |>
