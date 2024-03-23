@@ -31,7 +31,12 @@ show_about_us <- function() {
             width = 4,
             htmltools::img(
               src = 'www/images/gus_first_lead_comp.jpg', width = '80%'
-            )
+            ),
+            shiny::tags$p(shiny::tags$i(
+              'Photo Credit:',
+              .get_tag_link('https://www.instagram.com/shialabooya/', '@shialabooya'),
+              style = 'font-size: .5em; text-align: center;'
+            ))
           ),
           shiny::column(
             width = 8,
