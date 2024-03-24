@@ -19,7 +19,8 @@ app_ui <- function(request) {
       ),
       color = "#3c8dbc"
     ),
-    header = bs4Dash::bs4DashNavbar(
+    header = bs4Dash::dashboardHeader(
+      fixed = FALSE,
       status = 'lightblue',
       title = bs4Dash::dashboardBrand(
         title = 'ClimbWith',
@@ -42,23 +43,8 @@ app_ui <- function(request) {
         )
       )
     ),
-    sidebar = bs4Dash::dashboardSidebar(
-      disable = TRUE
-    ),
+    sidebar = bs4Dash::dashboardSidebar(disable = TRUE),
     body = bs4Dash::dashboardBody(
-      bs4Dash::box(
-        title = 'Maps',
-        width = 12,
-        status = 'primary',
-        solidHeader = TRUE,
-        dropdownMenu = bs4Dash::actionButton(
-          inputId = 'toggle_clusters',
-          label = NULL,
-          status = 'warning',
-          size = 'xs'
-        ),
-        leaflet::leafletOutput('map')
-      ),
       bs4Dash::box(
         title = 'Filters',
         id = 'box_filter',
@@ -311,6 +297,19 @@ app_ui <- function(request) {
             )
           )
         )
+      ),
+      bs4Dash::box(
+        title = 'Maps',
+        width = 12,
+        status = 'primary',
+        solidHeader = TRUE,
+        dropdownMenu = bs4Dash::actionButton(
+          inputId = 'toggle_clusters',
+          label = NULL,
+          status = 'warning',
+          size = 'xs'
+        ),
+        leaflet::leafletOutput('map')
       ),
       bs4Dash::box(
         title = 'Table',
