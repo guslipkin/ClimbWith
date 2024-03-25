@@ -34,6 +34,7 @@ app_server <- function(input, output, session) {
     .create_table() |>
     DT::renderDT()
 
+  #----user settings----
   shiny::observe({
     if (stop_clusters() == stop_clusters_default) {
       stop_clusters(Inf)
@@ -52,6 +53,28 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(input$toggle_clusters)
 
+  shiny::observe({
+    if (height_unit() == 'm') height_unit('ft') else height_unit('m')
+    shiny::updateActionButton(
+      inputId = 'height_unit',
+      label = shiny::HTML('<img src="www/images/gear.svg"/>', glue::glue(' Units: {height_unit()}'))
+    )
+  }) |>
+    shiny::bindEvent(input$height_unit, ignoreInit = TRUE)
+
+  shiny::observe({
+    boulder_height(.get_height_range('boulder', height_unit()))
+    rope_height(.get_height_range('rope', height_unit()))
+    shinyWidgets::updateSliderTextInput(
+      session, inputId = 'filter_boulder_height', choices = boulder_height()
+    )
+    shinyWidgets::updateSliderTextInput(
+      session, inputId = 'filter_rope_height', choices = rope_height()
+    )
+  }) |>
+    shiny::bindEvent(height_unit(), ignoreInit = TRUE)
+
+  #----filters----
   shiny::observe({
     shinyWidgets::updateAwesomeCheckboxGroup(session, inputId = 'filter_climbing', selected = FALSE)
     shinyWidgets::updateAwesomeCheckboxGroup(session, inputId = 'filter_fitness', selected = FALSE)
@@ -79,70 +102,6 @@ app_server <- function(input, output, session) {
     shinyWidgets::updatePickerInput(session, inputId = 'filter_moonboard_board_set', selected = FALSE)
   }) |>
     shiny::bindEvent(input$clear_filters, ignoreNULL = TRUE, ignoreInit = FALSE)
-
-  shiny::observe({
-    if (height_unit() == 'm') height_unit('ft') else height_unit('m')
-    shiny::updateActionButton(
-      inputId = 'height_unit',
-      label = shiny::HTML('<img src="www/images/gear.svg"/>', glue::glue(' Units: {height_unit()}'))
-    )
-  }) |>
-    shiny::bindEvent(input$height_unit, ignoreInit = TRUE)
-
-  shiny::observe({
-    boulder_height(.get_height_range('boulder', height_unit()))
-    rope_height(.get_height_range('rope', height_unit()))
-    shinyWidgets::updateSliderTextInput(
-      session, inputId = 'filter_boulder_height', choices = boulder_height()
-    )
-    shinyWidgets::updateSliderTextInput(
-      session, inputId = 'filter_rope_height', choices = rope_height()
-    )
-  }) |>
-    shiny::bindEvent(height_unit(), ignoreInit = TRUE)
-
-  shiny::observe({
-    dt <- if (is.null(input$table_rows_selected)) dat() else dat()[input$table_rows_selected,]
-    selected_dat(dt)
-    if (nrow(dt) == 0) show_no_matches()
-  }) |>
-    shiny::bindEvent(
-      dat(), input$table_rows_selected, ignoreNULL = FALSE, ignoreInit = FALSE
-    )
-
-  shiny::observe({
-    b <- .get_bounds(selected_dat())
-    leaflet::leafletProxy('map', data = selected_dat()) |>
-      leaflet::fitBounds(
-        b[1], b[2], b[3], b[4],
-        options = list('maxZoom' = 12, 'padding' = rep(24, 2))
-      ) |>
-      .add_markers(selected_dat(), cluster = isTRUE(input$map_zoom < stop_clusters()))
-    map_zoom(input$map_zoom)
-  }) |>
-    shiny::bindEvent(
-      dat(), selected_dat(), ignoreNULL = FALSE, ignoreInit = TRUE
-    )
-
-  shiny::observe({
-    if (is.null(map_zoom())) map_zoom(input$map_zoom)
-    if (stop_clusters() == Inf | (input$map_zoom >= stop_clusters() & map_zoom() < stop_clusters())) {
-      cluster <- FALSE
-    } else if (input$map_zoom < stop_clusters()) {
-      cluster <- TRUE
-    } else {
-      cluster <- NULL
-    }
-    map_zoom(input$map_zoom)
-    if (!is.null(cluster)) {
-      leaflet::leafletProxy('map', data = selected_dat()) |>
-        .add_markers(selected_dat(), cluster = cluster)
-    }
-  }) |>
-    shiny::bindEvent(
-      input$map_zoom, stop_clusters(),
-      ignoreInit = TRUE, ignoreNULL = TRUE
-    )
 
   shiny::observe({
     full_data |>
@@ -173,6 +132,52 @@ app_server <- function(input, output, session) {
     ) |>
     shiny::debounce(300)
 
+  #----row selection----
+  shiny::observe({
+    dt <- if (is.null(input$table_rows_selected)) dat() else dat()[input$table_rows_selected,]
+    selected_dat(dt)
+    if (nrow(dt) == 0) show_no_matches()
+  }) |>
+    shiny::bindEvent(
+      dat(), input$table_rows_selected, ignoreNULL = FALSE, ignoreInit = FALSE
+    )
+
+  shiny::observe({
+    b <- .get_bounds(selected_dat())
+    leaflet::leafletProxy('map', data = selected_dat()) |>
+      leaflet::fitBounds(
+        b[1], b[2], b[3], b[4],
+        options = list('maxZoom' = 12, 'padding' = rep(24, 2))
+      ) |>
+      .add_markers(selected_dat(), cluster = isTRUE(input$map_zoom < stop_clusters()))
+    map_zoom(input$map_zoom)
+  }) |>
+    shiny::bindEvent(
+      dat(), selected_dat(), ignoreNULL = FALSE, ignoreInit = TRUE
+    )
+
+  #----clusters----
+  shiny::observe({
+    if (is.null(map_zoom())) map_zoom(input$map_zoom)
+    if (stop_clusters() == Inf | (input$map_zoom >= stop_clusters() & map_zoom() < stop_clusters())) {
+      cluster <- FALSE
+    } else if (input$map_zoom < stop_clusters()) {
+      cluster <- TRUE
+    } else {
+      cluster <- NULL
+    }
+    map_zoom(input$map_zoom)
+    if (!is.null(cluster)) {
+      leaflet::leafletProxy('map', data = selected_dat()) |>
+        .add_markers(selected_dat(), cluster = cluster)
+    }
+  }) |>
+    shiny::bindEvent(
+      input$map_zoom, stop_clusters(),
+      ignoreInit = TRUE, ignoreNULL = TRUE
+    )
+
+  #----table columns----
   shiny::observe({
     if (is.null(input$table_columns)) {
       shinyWidgets::updateCheckboxGroupButtons(
@@ -194,6 +199,7 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(input$table_columns, height_unit(), dat(), ignoreNULL = FALSE, ignoreInit = FALSE)
 
+  #----misc----
   shiny::observe({ show_about_us() }) |>
     shiny::bindEvent(input$about_us)
 
