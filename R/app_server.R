@@ -153,7 +153,7 @@ app_server <- function(input, output, session) {
     map_zoom(input$map_zoom)
   }) |>
     shiny::bindEvent(
-      dat(), selected_dat(), ignoreNULL = FALSE, ignoreInit = TRUE
+      selected_dat(), ignoreNULL = FALSE, ignoreInit = TRUE
     )
 
   #----clusters----
