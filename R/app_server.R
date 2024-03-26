@@ -17,6 +17,7 @@ app_server <- function(input, output, session) {
     )
   )
   dat <- shiny::reactiveVal(full_data)
+  table_dat <- shiny::reactiveVal(full_data)
   selected_dat <- shiny::reactiveVal(full_data)
   height_unit <- shiny::reactiveVal('m')
   boulder_height <- shiny::reactiveVal()
@@ -30,7 +31,7 @@ app_server <- function(input, output, session) {
     .create_map() |>
     leaflet::renderLeaflet()
   output$table <-
-    dat() |>
+    table_dat() |>
     .create_table() |>
     DT::renderDT()
 
@@ -103,6 +104,31 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(input$clear_filters, ignoreNULL = TRUE, ignoreInit = FALSE)
 
+    shiny::observe({
+    if (is.null(input$table_rows_selected) & !is.null(input$map_bounds)) {
+      dat() |>
+        dplyr::filter(
+          dplyr::between(.data$lon, input$map_bounds$west, input$map_bounds$east),
+          dplyr::between(.data$lat, input$map_bounds$south, input$map_bounds$north)
+        ) |>
+        table_dat()
+    }
+    if (nrow(table_dat()) == 0) show_no_matches()
+  }) |>
+    shiny::bindEvent(
+      dat(), input$table_rows_selected, input$map_bounds,
+      ignoreNULL = FALSE, ignoreInit = FALSE
+    )
+
+  #----row selection----
+  shiny::observe({
+    dt <- table_dat()[rlang::`%||%`(input$table_rows_selected, seq_len(nrow(table_dat()))),]
+    selected_dat(dt)
+  }) |>
+    shiny::bindEvent(
+      table_dat(), input$table_rows_selected, ignoreNULL = FALSE, ignoreInit = FALSE
+    )
+
   shiny::observe({
     full_data |>
       .filter_climbing(input$filter_climbing, .column_grouping$Climbing) |>
@@ -132,49 +158,56 @@ app_server <- function(input, output, session) {
     ) |>
     shiny::debounce(300)
 
-  #----row selection----
-  shiny::observe({
-    dt <- if (is.null(input$table_rows_selected)) dat() else dat()[input$table_rows_selected,]
-    selected_dat(dt)
-    if (nrow(dt) == 0) show_no_matches()
-  }) |>
-    shiny::bindEvent(
-      dat(), input$table_rows_selected, ignoreNULL = FALSE, ignoreInit = FALSE
-    )
-
-  shiny::observe({
-    b <- .get_bounds(selected_dat())
-    leaflet::leafletProxy('map', data = selected_dat()) |>
-      leaflet::fitBounds(
-        b[1], b[2], b[3], b[4],
-        options = list('maxZoom' = 12, 'padding' = rep(24, 2))
-      ) |>
-      .add_markers(selected_dat(), cluster = isTRUE(input$map_zoom < stop_clusters()))
-    map_zoom(input$map_zoom)
-  }) |>
-    shiny::bindEvent(
-      selected_dat(), ignoreNULL = FALSE, ignoreInit = TRUE
-    )
+  # shiny::observe({
+  #   b <- .get_bounds(selected_dat())
+  #   leaflet::leafletProxy('map', data = selected_dat()) |>
+  #     # leaflet::fitBounds(
+  #     #   b[1], b[2], b[3], b[4],
+  #     #   options = list('maxZoom' = 12, 'padding' = rep(24, 2))
+  #     # ) |>
+  #     .add_markers(selected_dat(), cluster = isTRUE(input$map_zoom < stop_clusters()))
+  #   map_zoom(input$map_zoom)
+  # }) |>
+  #   shiny::bindEvent(
+  #     selected_dat(), ignoreNULL = FALSE, ignoreInit = TRUE
+  #   )
 
   #----clusters----
   shiny::observe({
+    shiny::req(selected_dat())
     if (is.null(map_zoom())) map_zoom(input$map_zoom)
-    if (stop_clusters() == Inf | (input$map_zoom >= stop_clusters() & map_zoom() < stop_clusters())) {
+    if (
+        !is.null(input$table_rows_selected) |
+        stop_clusters() == Inf |
+        (input$map_zoom >= stop_clusters() & map_zoom() < stop_clusters())
+      ) {
       cluster <- FALSE
     } else if (input$map_zoom < stop_clusters()) {
       cluster <- TRUE
     } else {
-      cluster <- NULL
+      cluster <- FALSE
     }
     map_zoom(input$map_zoom)
     if (!is.null(cluster)) {
+      # b <- .get_bounds(selected_dat())
       leaflet::leafletProxy('map', data = selected_dat()) |>
+        # (\(x) {
+        #   if (!is.null(input$table_rows_selected)) {
+        #     x <-
+        #       x |>
+        #       leaflet::fitBounds(
+        #         b[1], b[2], b[3], b[4],
+        #         options = list('maxZoom' = 12, 'padding' = rep(24, 2))
+        #       )
+        #   }
+        #   return(x)
+        # })() |>
         .add_markers(selected_dat(), cluster = cluster)
     }
   }) |>
     shiny::bindEvent(
-      input$map_zoom, stop_clusters(),
-      ignoreInit = TRUE, ignoreNULL = TRUE
+      input$map_zoom, stop_clusters(), input$table_rows_selected, selected_dat(),
+      ignoreInit = TRUE, ignoreNULL = FALSE
     )
 
   #----table columns----
@@ -197,7 +230,10 @@ app_server <- function(input, output, session) {
         reset = TRUE
       )
   }) |>
-    shiny::bindEvent(input$table_columns, height_unit(), dat(), ignoreNULL = FALSE, ignoreInit = FALSE)
+    shiny::bindEvent(
+      input$table_columns, height_unit(), table_dat(),
+      ignoreNULL = FALSE, ignoreInit = FALSE
+    )
 
   #----misc----
   shiny::observe({ show_about_us() }) |>
