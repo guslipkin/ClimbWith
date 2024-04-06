@@ -24,7 +24,7 @@ golem::fill_desc(
   pkg_description = "Look for rock climbing gyms based on features you want", # The Description of the package containing the App
   author_first_name = "Gus", # Your First Name
   author_last_name = "Lipkin", # Your Last Name
-  author_email = "gus@climbwith.info", # Your Email
+  author_email = glue::glue("gus@{.url()}"), # Your Email
   repo_url = NULL, # The URL of the GitHub Repo (optional),
   pkg_version = "0.0.0.9000" # The Version of the package containing the App
 )

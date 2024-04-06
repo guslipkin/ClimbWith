@@ -42,3 +42,7 @@ get_golem_config <- function(
     use_parent = use_parent
   )
 }
+
+.url <- function(full = FALSE) {
+  if (full) 'https://climbwith.info' else 'climbwith.info'
+}
