@@ -27,6 +27,7 @@ app_ui <- function(request) {
         color = 'lightblue'
       ),
       shiny::tags$head(
+        shinyjs::useShinyjs(),
         shiny::tags$style(
           shiny::HTML(glue::glue("
             .filter_boulder_height .irs--shiny .irs-line {
@@ -299,15 +300,30 @@ app_ui <- function(request) {
         )
       ),
       bs4Dash::box(
-        title = 'Maps',
+        id = 'map_box',
+        title = 'Map',
         width = 12,
         status = 'primary',
         solidHeader = TRUE,
-        dropdownMenu = bs4Dash::actionButton(
-          inputId = 'toggle_clusters',
-          label = NULL,
-          status = 'warning',
-          size = 'xs'
+        dropdownMenu = list(
+          bs4Dash::actionButton(
+            inputId = 'toggle_clusters',
+            label = NULL,
+            status = 'warning',
+            size = 'xs'
+          ),
+          bs4Dash::actionButton(
+            inputId = 'fit_zoom',
+            label = NULL,
+            status = 'warning',
+            size = 'xs'
+          ),
+          bs4Dash::actionButton(
+            inputId = 'reset_zoom',
+            label = NULL,
+            status = 'warning',
+            size = 'xs'
+          )
         ),
         leaflet::leafletOutput('map')
       ),
@@ -359,7 +375,7 @@ app_ui <- function(request) {
               icon = NULL, width = NULL,
               class = 'bg-warning',
               style = 'width: 100%;',
-              onclick = "window.open('mailto:gus@climbwith.info?subject=ClimbWith', '_blank')"
+              onclick = glue::glue("window.open('mailto:gus@{.url()}?subject=ClimbWith', '_blank')")
             )
           ),
           shiny::column(
@@ -381,6 +397,19 @@ app_ui <- function(request) {
             shiny::actionButton(
               inputId = 'about_us',
               htmltools::img(src = 'www/images/info-circle.svg'), ' About Us',
+              icon = NULL, width = NULL,
+              class = 'bg-info',
+              style = 'width: 100%;'
+            )
+          )
+        ),
+        shiny::tags$br(),
+        shiny::fluidRow(
+          shiny::column(
+            width = 12,
+            shiny::actionButton(
+              inputId = 'terms',
+              htmltools::img(src = 'www/images/shield-check.svg'), ' Terms',
               icon = NULL, width = NULL,
               class = 'bg-info',
               style = 'width: 100%;'

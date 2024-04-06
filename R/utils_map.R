@@ -9,6 +9,15 @@
     unname()
 }
 
+.fit_bounds <- function(map, data) {
+  b <- .get_bounds(data)
+  map |>
+    leaflet::fitBounds(
+      b[1], b[2], b[3], b[4],
+      options = list('maxZoom' = 12, 'padding' = rep(24, 2))
+    )
+}
+
 .create_map <- function(.data) {
   .data |>
     leaflet::leaflet() |>
@@ -25,28 +34,12 @@
             map.locate({
               setView: true,
               enableHighAccuracy: true,
-              maxZoom: 10
+              maxZoom: 11
             })
           }"
         )
       )
     ) |>
-    # leaflet::addEasyButton(
-    #   leaflet::easyButton(
-    #     position = "topleft",
-    #     icon = "fa-maximize",
-    #     title = "Fit",
-    #     onClick = leaflet::JS(
-    #       "function(btn,  map){
-    #         map.eachLayer(function(layer) {
-    #           if (layer.id === 'markers') {
-    #             // map.fitBounds(map.getLayer(layer.id).getBounds());
-    #           }
-    #         });
-    #       }"
-    #     )
-    #   )
-    # ) |>
     .add_markers(.data)
 }
 

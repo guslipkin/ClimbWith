@@ -16,6 +16,25 @@ app_server <- function(input, output, session) {
       '<img src="www/images/toggle-on.svg"/>', 'Toggle Clusters'
     )
   )
+  shiny::updateActionButton(
+    inputId = 'fit_zoom',
+    label = shiny::HTML(
+      '<img src="www/images/arrows-angle-expand.svg"/>', 'Fit Points'
+    )
+  )
+  shiny::updateActionButton(
+    inputId = 'reset_zoom',
+    label = shiny::HTML(
+      '<img src="www/images/arrows-angle-contract.svg"/>', 'Reset Zoom'
+    )
+  )
+  shinyjs::runjs("
+    $('.card-tools')
+      .contents()
+      .filter(function() { return this.nodeType == 3; })
+      .replaceWith(' ');
+  ")
+  # btn btn-tool btn-sm btn-primary dropdown-toggle
   dat <- shiny::reactiveVal(full_data)
   table_dat <- shiny::reactiveVal(full_data)
   selected_dat <- shiny::reactiveVal(full_data)
@@ -104,7 +123,7 @@ app_server <- function(input, output, session) {
   }) |>
     shiny::bindEvent(input$clear_filters, ignoreNULL = TRUE, ignoreInit = FALSE)
 
-    shiny::observe({
+  shiny::observe({
     if (is.null(input$table_rows_selected) & !is.null(input$map_bounds)) {
       dat() |>
         dplyr::filter(
@@ -119,6 +138,20 @@ app_server <- function(input, output, session) {
       dat(), input$table_rows_selected, input$map_bounds,
       ignoreNULL = FALSE, ignoreInit = FALSE
     )
+
+  #----user zoom----
+  shiny::observe({
+    shiny::req(selected_dat())
+    leaflet::leafletProxy('map', data = selected_dat()) |>
+      .fit_bounds(selected_dat())
+  }) |>
+    shiny::bindEvent(input$fit_zoom, ignoreInit = TRUE)
+
+  shiny::observe({
+    leaflet::leafletProxy('map', data = dat()) |>
+      .fit_bounds(dat())
+  }) |>
+    shiny::bindEvent(input$reset_zoom, ignoreInit = TRUE)
 
   #----row selection----
   shiny::observe({
@@ -189,19 +222,7 @@ app_server <- function(input, output, session) {
     }
     map_zoom(input$map_zoom)
     if (!is.null(cluster)) {
-      # b <- .get_bounds(selected_dat())
       leaflet::leafletProxy('map', data = selected_dat()) |>
-        # (\(x) {
-        #   if (!is.null(input$table_rows_selected)) {
-        #     x <-
-        #       x |>
-        #       leaflet::fitBounds(
-        #         b[1], b[2], b[3], b[4],
-        #         options = list('maxZoom' = 12, 'padding' = rep(24, 2))
-        #       )
-        #   }
-        #   return(x)
-        # })() |>
         .add_markers(selected_dat(), cluster = cluster)
     }
   }) |>
@@ -238,6 +259,8 @@ app_server <- function(input, output, session) {
   #----misc----
   shiny::observe({ show_about_us() }) |>
     shiny::bindEvent(input$about_us)
+  shiny::observe({ show_terms() }) |>
+    shiny::bindEvent(input$terms)
 
   shiny::observe({ shiny::invalidateLater(1e4) })
 }
