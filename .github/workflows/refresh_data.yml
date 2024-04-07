@@ -18,8 +18,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          Rscript -e
-            install.packages(c(
+          Rscript -e 'install.packages(c(
               "dplyr",
               "googlesheets4",
               "janitor",
@@ -31,7 +30,7 @@ jobs:
               "tidyr",
               "tidyselect",
               "usethis"
-            ))
+            ))'
 
       - name: Check out repository
         uses: actions/checkout@v3
