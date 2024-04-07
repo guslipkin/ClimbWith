@@ -11,21 +11,25 @@ jobs:
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
 
-      - name: Install packages
-        uses: r-lib/actions/setup-r-dependencies@v2
+      - name: Enable P3M
         with:
-          packages: |
-            any::dplyr
-            any::googlesheets4
-            any::janitor
-            any::purrr
-            any::readr
-            any::stats
-            any::stringr
-            any::tibble
-            any::tidyr
-            any::tidyselect
-            any::usethis
+          use-public-rspm: true
+
+      - name: Install dependencies
+        run: |
+          install.packages(c(
+            "dplyr",
+            "googlesheets4",
+            "janitor",
+            "purrr",
+            "readr",
+            "stats",
+            "stringr",
+            "tibble",
+            "tidyr",
+            "tidyselect",
+            "usethis"
+          ))
 
       - name: Check out repository
         uses: actions/checkout@v3
