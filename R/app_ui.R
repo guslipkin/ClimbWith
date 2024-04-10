@@ -349,7 +349,7 @@ app_ui <- function(request) {
         DT::DTOutput('table')
       ),
       bs4Dash::box(
-        title = 'Help (me or you)',
+        title = 'Help (us or you)',
         width = 12,
         id = 'box_help',
         status = 'secondary',
@@ -360,7 +360,7 @@ app_ui <- function(request) {
             width = 4,
             shiny::actionButton(
               inputId = 'add_gym',
-              htmltools::img(src = 'www/images/plus-circle.svg'), ' Add my gym',
+              shiny::tags$span(htmltools::img(src = 'www/images/plus-circle.svg'), ' Add my gym'),
               icon = NULL, width = NULL,
               class = 'bg-success',
               style = 'width: 100%;',
@@ -371,18 +371,18 @@ app_ui <- function(request) {
             width = 4,
             shiny::actionButton(
               inputId = 'email_me',
-              htmltools::img(src = 'www/images/envelope-at.svg'), ' Email me',
+              shiny::tags$span(htmltools::img(src = 'www/images/envelope-at.svg'), ' Email us'),
               icon = NULL, width = NULL,
               class = 'bg-warning',
               style = 'width: 100%;',
-              onclick = glue::glue("window.open('mailto:gus@{.url()}?subject=ClimbWith', '_blank')")
+              onclick = glue::glue("window.open('mailto:contact@{.url()}?subject=ClimbWith', '_blank')")
             )
           ),
           shiny::column(
             width = 4,
             shiny::actionButton(
               inputId = 'report_problems',
-              htmltools::img(src = 'www/images/flag.svg'), ' Report a problem',
+              shiny::tags$span(htmltools::img(src = 'www/images/flag.svg'), ' Report a problem'),
               icon = NULL, width = NULL,
               class = 'bg-danger',
               style = 'width: 100%;',
@@ -396,7 +396,7 @@ app_ui <- function(request) {
             width = 12,
             shiny::actionButton(
               inputId = 'about_us',
-              htmltools::img(src = 'www/images/info-circle.svg'), ' About Us',
+              shiny::tags$span(htmltools::img(src = 'www/images/info-circle.svg'), ' About us'),
               icon = NULL, width = NULL,
               class = 'bg-info',
               style = 'width: 100%;'
@@ -409,7 +409,7 @@ app_ui <- function(request) {
             width = 12,
             shiny::actionButton(
               inputId = 'terms',
-              htmltools::img(src = 'www/images/shield-check.svg'), ' Terms',
+              shiny::tags$span(htmltools::img(src = 'www/images/shield-check.svg'), ' Terms'),
               icon = NULL, width = NULL,
               class = 'bg-info',
               style = 'width: 100%;'
