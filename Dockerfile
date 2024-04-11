@@ -18,9 +18,9 @@ RUN Rscript -e 'remotes::install_version("testthat",upgrade="never", version = "
 RUN Rscript -e 'remotes::install_version("tidyr",upgrade="never", version = "1.3.1")'
 RUN Rscript -e 'remotes::install_version("shinyWidgets",upgrade="never", version = "0.8.4")'
 RUN Rscript -e 'remotes::install_version("shinyjs",upgrade="never", version = "2.1.0")'
-RUN Rscript -e 'remotes::install_version("leaflet",upgrade="never", version = "2.2.1")'
+RUN Rscript -e 'remotes::install_version("leaflet",upgrade="never", version = "2.2.2")'
 RUN Rscript -e 'remotes::install_version("bs4Dash",upgrade="never", version = "2.3.3")'
-RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.32")'
+RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.33")'
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.4.1")'
 RUN mkdir /build_zone
 ADD . /build_zone

@@ -9,3 +9,4 @@ $run_dev.*
 ^rsconnect$
 ^Dockerfile$
 ^\.dockerignore$
+^\.github$
