@@ -49,15 +49,11 @@ jobs:
           git commit -m 'Data updated' || echo "No changes to commit"
           git push origin || echo "No changes to commit"
   deploy:
+    needs: import-data
     runs-on: ubuntu-latest
     steps:
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
+    - name: DigitalOcean App Platform deployment
+      uses: digitalocean/app_action@v1.1.5
       with:
+        app_name: climbwith
         token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-    - name: Log in to DigitalOcean Container Registry with short-lived credentials
-      run: doctl registry login --expiry-seconds 600
-
-    - name: Deploy with doctl
-      run: doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }}
