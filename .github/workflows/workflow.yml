@@ -47,7 +47,7 @@ jobs:
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add 'data-raw/data.csv' 'R/sysdata.rda'
-          git commit -m 'Data updated' || echo "false" >> "$new_data"
+          git commit -m 'Data updated' || new_data=false
           git push origin || echo "No changes to commit"
           echo "new_data=$new_data" >> "$GITHUB_OUTPUT"
   deploy:
