@@ -49,14 +49,13 @@ jobs:
           git add 'data-raw/data.csv' 'R/sysdata.rda'
           git commit -m 'Data updated' || echo "No changes to commit"
           git push origin || echo "new_data='false'" >> "$GITHUB_OUTPUT"
-          echo $new_data
   deploy:
     needs: import-data
     runs-on: ubuntu-latest
     steps:
-    - name: check env
+    - name: Should rebuild?
       env:
-        OUTPUT1: ${{needs.import-data.outputs.new_data}}
+        OUTPUT1: ${{ needs.import-data.outputs.new_data }}
       run: echo "$OUTPUT1"
     - name: DigitalOcean App Platform deployment
       if: ${{ needs.import-data.outputs.new_data == 'true' }}
