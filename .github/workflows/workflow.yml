@@ -43,18 +43,19 @@ jobs:
       - name: Commit results
         id: commit_results
         run: |
-          echo "new_data=true" >> "$GITHUB_OUTPUT"
+          echo "new_data='true'" >> "$GITHUB_OUTPUT"
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add 'data-raw/data.csv' 'R/sysdata.rda'
           git commit -m 'Data updated' || echo "No changes to commit"
-          git push origin || echo "new_data=false" >> "$GITHUB_OUTPUT"
+          git push origin || echo "new_data='false'" >> "$GITHUB_OUTPUT"
+          echo $new_data
   deploy:
     needs: import-data
     runs-on: ubuntu-latest
     steps:
     - name: DigitalOcean App Platform deployment
-      if: ${{ needs.import-data.outputs.new_data }}
+      if: ${{ needs.import-data.outputs.new_data == 'true' }}
       uses: digitalocean/app_action@v1.1.5
       with:
         app_name: climbwith
