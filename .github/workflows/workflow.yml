@@ -7,6 +7,8 @@ on:
 jobs:
   import-data:
     runs-on: ubuntu-latest
+    outputs:
+        NEW_DATA: ${{ steps.commit_results.new_data }}
     permissions:
       contents: write
     steps:
@@ -39,20 +41,20 @@ jobs:
         run: Rscript -e 'source("data-raw/internal-data.R")'
 
       - name: Commit results
+        id: commit_results
         run: |
-          NEW_DATA=true
+          echo "new_data=true" >> "$GITHUB_OUTPUT"
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add 'data-raw/data.csv' 'R/sysdata.rda'
           git commit -m 'Data updated' || echo "No changes to commit"
-          git push origin || NEW_DATA=false
-          export NEW_DATA
+          git push origin || echo "new_data=false" >> "$GITHUB_OUTPUT"
   deploy:
     needs: import-data
     runs-on: ubuntu-latest
     steps:
     - name: DigitalOcean App Platform deployment
-      if: ${{ env.NEW_DATA }}
+      if: ${{ needs.import-data.outputs.new_data }}
       uses: digitalocean/app_action@v1.1.5
       with:
         app_name: climbwith
