@@ -40,13 +40,16 @@ jobs:
 
       - name: Commit results
         run: |
+          NEW_DATA=true
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add 'data-raw/data.csv' 'R/sysdata.rda'
           git commit -m 'Data updated' || echo "No changes to commit"
-          git push origin || echo "No changes to commit"
+          git push origin || NEW_DATA=false
+          export NEW_DATA
   deploy:
     needs: import-data
+    if: ${{ env.NEW_DATA }}
     runs-on: ubuntu-latest
     steps:
     - name: DigitalOcean App Platform deployment
