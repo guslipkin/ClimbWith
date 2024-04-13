@@ -49,10 +49,10 @@ jobs:
           export NEW_DATA
   deploy:
     needs: import-data
-    if: ${{ env.NEW_DATA }}
     runs-on: ubuntu-latest
     steps:
     - name: DigitalOcean App Platform deployment
+      if: ${{ env.NEW_DATA }}
       uses: digitalocean/app_action@v1.1.5
       with:
         app_name: climbwith
