@@ -5,7 +5,7 @@ on:
     - cron: '00 00 * * *'
 
 jobs:
-  import-data:
+  import_data:
     runs-on: ubuntu-latest
     outputs:
         new_data: ${{ steps.commit_results.new_data }}
@@ -43,23 +43,22 @@ jobs:
       - name: Commit results
         id: commit_results
         run: |
-          echo "new_data='true'" >> "$GITHUB_OUTPUT"
+          echo "new_data=true" >> "$GITHUB_OUTPUT"
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add 'data-raw/data.csv' 'R/sysdata.rda'
           git commit -m 'Data updated' || echo "No changes to commit"
-          git push origin || echo "new_data='false'" >> "$GITHUB_OUTPUT"
+          git push origin || echo "new_data=false" >> "$GITHUB_OUTPUT"
   deploy:
     needs: import-data
     runs-on: ubuntu-latest
     steps:
-    - name: Should rebuild?
-      env:
-        new_data: ${{ needs.import-data.outputs.new_data }}
-      run: echo $new_data
-    - name: DigitalOcean App Platform deployment
-      if: ${{ needs.import-data.outputs.new_data == 'true' }}
-      uses: digitalocean/app_action@v1.1.5
-      with:
-        app_name: climbwith
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - env:
+          NEW_DATA: ${{ needs.import_data.outputs.new_data }}
+        run: echo $NEW_DATA
+      - name: DigitalOcean App Platform deployment
+        if: ${{ needs.import_data.outputs.new_data == 'true' }}
+        uses: digitalocean/app_action@v1.1.5
+        with:
+          app_name: climbwith
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
