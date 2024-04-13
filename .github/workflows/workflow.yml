@@ -52,9 +52,13 @@ jobs:
   deploy:
     needs: import_data
     runs-on: ubuntu-latest
-    if: ${{ needs.import_data.outputs.new_data == 'true' }}
     steps:
+      - name: Check env
+        env:
+          NEW_DATA: ${{ needs.import_data.outputs.new_data }}
+        run: echo $NEW_DATA
       - name: DigitalOcean App Platform deployment
+        if: ${{ needs.import_data.outputs.new_data == 'true' }}
         uses: digitalocean/app_action@v1.1.5
         with:
           app_name: climbwith
