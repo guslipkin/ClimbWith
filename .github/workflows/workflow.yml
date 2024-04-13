@@ -50,7 +50,7 @@ jobs:
           git commit -m 'Data updated' || echo "No changes to commit"
           git push origin || echo "new_data=false" >> "$GITHUB_OUTPUT"
   deploy:
-    needs: import-data
+    needs: import_data
     runs-on: ubuntu-latest
     steps:
       - env:
