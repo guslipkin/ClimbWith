@@ -8,7 +8,7 @@ jobs:
   import_data:
     runs-on: ubuntu-latest
     outputs:
-        new_data: ${{ steps.commit_results.new_data }}
+        new_data: ${{ steps.commit_results.outputs.new_data }}
     permissions:
       contents: write
     steps:
@@ -53,7 +53,8 @@ jobs:
     needs: import_data
     runs-on: ubuntu-latest
     steps:
-      - env:
+      - name: Check env
+        env:
           NEW_DATA: ${{ needs.import_data.outputs.new_data }}
         run: echo $NEW_DATA
       - name: DigitalOcean App Platform deployment
