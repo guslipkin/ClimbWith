@@ -54,6 +54,10 @@ jobs:
     needs: import-data
     runs-on: ubuntu-latest
     steps:
+    - name: check env
+      env:
+        OUTPUT1: ${{needs.import-data.outputs.new_data}}
+      run: echo "$OUTPUT1"
     - name: DigitalOcean App Platform deployment
       if: ${{ needs.import-data.outputs.new_data == 'true' }}
       uses: digitalocean/app_action@v1.1.5
