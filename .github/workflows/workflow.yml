@@ -43,12 +43,13 @@ jobs:
       - name: Commit results
         id: commit_results
         run: |
-          echo "new_data=true" >> "$GITHUB_OUTPUT"
+          new_data=true
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git add 'data-raw/data.csv' 'R/sysdata.rda'
           git commit -m 'Data updated' || echo "No changes to commit"
-          git push origin || echo "new_data=false" >> "$GITHUB_OUTPUT"
+          git push origin || new_data=false
+          echo "new_data=$new_data" >> "$GITHUB_OUTPUT"
   deploy:
     needs: import_data
     runs-on: ubuntu-latest
