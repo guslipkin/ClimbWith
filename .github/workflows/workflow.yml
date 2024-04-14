@@ -1,6 +1,11 @@
 on:
   push:
     branches: main
+    paths:
+      - 'Dockerfile'
+      - '**.R'
+      - 'data-raw/**'
+      - 'inst/**'
   schedule:
     - cron: '00 00 * * *'
 
