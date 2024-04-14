@@ -57,9 +57,11 @@ jobs:
       - name: Check env
         env:
           NEW_DATA: ${{ needs.import_data.outputs.new_data }}
-        run: echo $NEW_DATA
+        run: |
+          echo "new_data=$NEW_DATA"
+          echo "is_schedule=$github.event_name"
       - name: DigitalOcean App Platform deployment
-        if: ${{ needs.import_data.outputs.new_data == 'true' }}
+        if: ${{ (needs.import_data.outputs.new_data == 'true' && github.event_name == 'schedule') || github.event_name == 'push' }}
         uses: digitalocean/app_action@v1.1.5
         with:
           app_name: climbwith
