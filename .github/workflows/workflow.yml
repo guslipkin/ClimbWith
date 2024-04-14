@@ -57,9 +57,10 @@ jobs:
       - name: Check env
         env:
           NEW_DATA: ${{ needs.import_data.outputs.new_data }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
           echo "new_data=$NEW_DATA"
-          echo "is_schedule=$github.event_name"
+          echo "event_name=$EVENT_NAME"
       - name: DigitalOcean App Platform deployment
         if: ${{ (needs.import_data.outputs.new_data == 'true' && github.event_name == 'schedule') || github.event_name == 'push' }}
         uses: digitalocean/app_action@v1.1.5
