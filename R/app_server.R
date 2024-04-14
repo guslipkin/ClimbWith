@@ -191,20 +191,6 @@ app_server <- function(input, output, session) {
     ) |>
     shiny::debounce(300)
 
-  # shiny::observe({
-  #   b <- .get_bounds(selected_dat())
-  #   leaflet::leafletProxy('map', data = selected_dat()) |>
-  #     # leaflet::fitBounds(
-  #     #   b[1], b[2], b[3], b[4],
-  #     #   options = list('maxZoom' = 12, 'padding' = rep(24, 2))
-  #     # ) |>
-  #     .add_markers(selected_dat(), cluster = isTRUE(input$map_zoom < stop_clusters()))
-  #   map_zoom(input$map_zoom)
-  # }) |>
-  #   shiny::bindEvent(
-  #     selected_dat(), ignoreNULL = FALSE, ignoreInit = TRUE
-  #   )
-
   #----clusters----
   shiny::observe({
     shiny::req(selected_dat())
