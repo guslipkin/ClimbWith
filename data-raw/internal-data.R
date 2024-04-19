@@ -95,6 +95,7 @@ full_data <-
   .column_group_wider('fitness', .column_grouping$Fitness)
 
 .board_lookup <- c(
+  "spray_wall" = "Spray Wall",
   "kilter_board_7x10_home" = 'Kilter 7x10 (Home)',
   "kilter_board_8x12" = 'Kilter 8x12',
   "kilter_board_12x12" = 'Kilter 12x12',
@@ -118,7 +119,12 @@ full_data <-
   "moon_board_moon_board_2019" = 'MoonBoard 2019',
   "moon_board_moon_board_2024" = 'MoonBoard 2024',
   "moon_board_moon_board_mini_2020" = 'MoonBoard Mini 2020',
-  "spray_wall" = "Spray Wall"
+  "grasshopper_board_8x10" = "Grasshopper Board 8x10",
+  "grasshopper_board_8x12" = "Grasshopper Board 8x12",
+  "grasshopper_board_12x12" = "Grasshopper Board 12x12",
+  "decoy_board_8x10" = "Decoy Board 8x10",
+  "decoy_board_8x12" = "Decoy Board 8x12",
+  "decoy_board_12x12" = "Decoy Board 12x12"
 )
 
 .board_model <-

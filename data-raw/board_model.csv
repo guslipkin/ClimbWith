@@ -24,3 +24,9 @@ mb2017,moon_board_moon_board_2017,MoonBoard,,8x12,2017
 mb2019,moon_board_moon_board_2019,MoonBoard,,8x12,2019
 mb2024,moon_board_moon_board_2024,MoonBoard,,8x12,2024
 mb2020,moon_board_moon_board_mini_2020,MoonBoard,Mini,8x8,2020
+gb0810,grasshopper_board_8x10,Grasshopper,,8x10,
+gb0812,grasshopper_board_8x12,Grasshopper,,8x12,
+gb1212,grasshopper_board_12x12,Grasshopper,,12x12,
+db0810,decoy_board_8x10,Decoy,,8x10,
+db0812,decoy_board_8x12,Decoy,,8x12,
+db1212,decoy_board_12x12,Decoy,,12x12,

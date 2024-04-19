@@ -10,11 +10,19 @@
 .get_moonboard_size <- function() { '' }
 .get_moonboard_set <- function() { c('2016', '2017', '2019', '2024', 'Mini 2020' = '2020') }
 
+.get_grasshopper_size <- function() { c('8x10', '8x12', '12x12') }
+.get_grasshopper_set <- function() { '' }
+
+.get_decoy_size <- function() { c('8x10', '8x12', '12x12') }
+.get_decoy_set <- function() { '' }
+
 .get_sictb_identifiers <- function() {
   list(
     'Kilter' = c('brand', 'size'),
     'Tension' = c('brand', 'model', 'size', 'set'),
-    'MoonBoard' = c('brand', 'set')
+    'MoonBoard' = c('brand', 'set'),
+    'Grasshopper' = c('brand', 'size'),
+    'Decoy' = c('brand', 'size')
   )
 }
 

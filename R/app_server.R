@@ -34,7 +34,6 @@ app_server <- function(input, output, session) {
       .filter(function() { return this.nodeType == 3; })
       .replaceWith(' ');
   ")
-  # btn btn-tool btn-sm btn-primary dropdown-toggle
   dat <- shiny::reactiveVal(full_data)
   table_dat <- shiny::reactiveVal(full_data)
   selected_dat <- shiny::reactiveVal(full_data)
@@ -120,6 +119,8 @@ app_server <- function(input, output, session) {
     shinyWidgets::updatePickerInput(session, inputId = 'filter_tension2_board_size', selected = FALSE)
     shinyWidgets::updatePickerInput(session, inputId = 'filter_tension2_board_set', selected = FALSE)
     shinyWidgets::updatePickerInput(session, inputId = 'filter_moonboard_board_set', selected = FALSE)
+    shinyWidgets::updatePickerInput(session, inputId = 'filter_grasshopper_board_size', selected = FALSE)
+    shinyWidgets::updatePickerInput(session, inputId = 'filter_decoy_board_size', selected = FALSE)
   }) |>
     shiny::bindEvent(input$clear_filters, ignoreNULL = TRUE, ignoreInit = FALSE)
 
@@ -173,6 +174,8 @@ app_server <- function(input, output, session) {
         input$filter_tension1_board_size, input$filter_tension1_board_set,
         input$filter_tension2_board_size, input$filter_tension2_board_set,
         input$filter_moonboard_board_set,
+        input$filter_grasshopper_board_size,
+        input$filter_decoy_board_size,
         .board_model, .board_insets
       ) |>
       .filter_board_angle(input$filter_board_angle) |>
@@ -187,6 +190,8 @@ app_server <- function(input, output, session) {
       input$filter_tension1_board_size, input$filter_tension1_board_set,
       input$filter_tension2_board_size, input$filter_tension2_board_set,
       input$filter_moonboard_board_set,
+      input$filter_grasshopper_board_size,
+      input$filter_decoy_board_size,
       ignoreNULL = FALSE, ignoreInit = TRUE
     ) |>
     shiny::debounce(300)

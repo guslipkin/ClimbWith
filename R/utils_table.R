@@ -1,4 +1,5 @@
 .create_table <- function(.data) {
+  .data <- full_data
   .data |>
     dplyr::mutate(
       'full_name' = glue::glue("<a href='{.data$gym_website}' target='_blank'>{.data$full_name}</a>"),
@@ -20,7 +21,7 @@
       'Bouldering' = 'bouldering', 'Top Rope' = 'top_rope', 'Lead' = 'lead',
       'Auto Belay' = 'auto_belay', 'Speed' = 'speed',
       'Treadwall' = 'treadwall',
-      'Spray Wall', 'Kilter Board', 'Tension Board', 'MoonBoard',
+      'Spray Wall', 'Kilter Board', 'Tension Board', 'MoonBoard', 'Grasshopper Board', 'Decoy Board',
       'Cardio Machines' = 'cardio_machines', 'Free Weights' = 'free_weights',
       'Weight Machines' = 'weight_machines', 'Yoga Studio' = 'yoga_studio'
     ) |>
@@ -43,7 +44,7 @@
               shiny::tags$th(rowspan = 2, 'Gym Name', style = 'vertical-align: bottom;'),
               shiny::tags$th(colspan = 4, 'Stats', style = 'text-align: center;'),
               shiny::tags$th(colspan = 6, 'Climbing', style = 'text-align: center;'),
-              shiny::tags$th(colspan = 4, 'Training Boards', style = 'text-align: center;'),
+              shiny::tags$th(colspan = 6, 'Training Boards', style = 'text-align: center;'),
               shiny::tags$th(colspan = 4, 'Fitness', style = 'text-align: center;')
             ),
             shiny::tags$tr(

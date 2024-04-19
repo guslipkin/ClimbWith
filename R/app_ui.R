@@ -183,7 +183,7 @@ app_ui <- function(request) {
               ),
               shiny::fluidRow(
                 shiny::column(
-                  width = 3,
+                  width = 4,
                   bs4Dash::box(
                     title = 'Kilter',
                     width = 12,
@@ -201,7 +201,7 @@ app_ui <- function(request) {
                   )
                 ),
                 shiny::column(
-                  width = 3,
+                  width = 4,
                   bs4Dash::box(
                     title = 'Tension 1',
                     width = 12,
@@ -239,7 +239,7 @@ app_ui <- function(request) {
                   )
                 ),
                 shiny::column(
-                  width = 3,
+                  width = 4,
                   bs4Dash::box(
                     title = 'Tension 2',
                     width = 12,
@@ -275,9 +275,11 @@ app_ui <- function(request) {
                       )
                     )
                   )
-                ),
+                )
+              ),
+              shiny::fluidRow(
                 shiny::column(
-                  width = 3,
+                  width = 4,
                   bs4Dash::box(
                     title = 'MoonBoard',
                     width = 12,
@@ -294,6 +296,42 @@ app_ui <- function(request) {
                     )
                   )
                 ),
+                shiny::column(
+                  width = 4,
+                  bs4Dash::box(
+                    title = 'Grasshopper Board',
+                    width = 12,
+                    collapsible = FALSE,
+                    shinyWidgets::pickerInput(
+                      inputId = 'filter_grasshopper_board_size',
+                      label = 'Set:',
+                      choices = .get_grasshopper_size(),
+                      multiple = TRUE,
+                      options = shinyWidgets::pickerOptions(
+                        actionsBox = TRUE,
+                        size = 'auto'
+                      )
+                    )
+                  )
+                ),
+                shiny::column(
+                  width = 4,
+                  bs4Dash::box(
+                    title = 'Decoy Board',
+                    width = 12,
+                    collapsible = FALSE,
+                    shinyWidgets::pickerInput(
+                      inputId = 'filter_decoy_board_size',
+                      label = 'Set:',
+                      choices = .get_decoy_size(),
+                      multiple = TRUE,
+                      options = shinyWidgets::pickerOptions(
+                        actionsBox = TRUE,
+                        size = 'auto'
+                      )
+                    )
+                  )
+                )
               )
             )
           )
@@ -337,7 +375,7 @@ app_ui <- function(request) {
           inputId = 'table_columns',
           label = NULL,
           choices = c('Stats', 'Climbing', 'Training Boards', 'Fitness'),
-          selected = c('Climbing', 'Training Boards', 'Fitness'),
+          selected = c('Climbing', 'Fitness'),
           status = 'table-columns',
           justified = TRUE,
           individual = TRUE,

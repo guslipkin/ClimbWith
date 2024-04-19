@@ -148,6 +148,8 @@
     input_filter_tension1_board_size, input_filter_tension1_board_set,
     input_filter_tension2_board_size, input_filter_tension2_board_set,
     input_filter_moonboard_set,
+    input_filter_grasshopper_board_size,
+    input_filter_decoy_board_size,
     .board_model, .board_insets
   ) {
 
@@ -168,6 +170,14 @@
       .make_board_name(
         'MoonBoard', '', NULL, input_filter_moonboard_set,
         .get_moonboard_size(), .get_moonboard_set(), .board_model, .board_insets
+      ),
+      .make_board_name(
+        'Grasshopper', '', input_filter_grasshopper_board_size, NULL,
+        .get_grasshopper_size(), .get_grasshopper_set(), .board_model, .board_insets
+      ),
+      .make_board_name(
+        'Decoy', '', input_filter_decoy_board_size, NULL,
+        .get_decoy_size(), .get_decoy_set(), .board_model, .board_insets
       ),
       .id = 'board_id'
     )
