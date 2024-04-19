@@ -64,8 +64,8 @@ jobs:
           NEW_DATA: ${{ needs.import_data.outputs.new_data }}
           EVENT_NAME: ${{ github.event_name }}
         run: |
-          echo "new_data=$NEW_DATA"
           echo "event_name=$EVENT_NAME"
+          echo "new_data=$NEW_DATA"
       - name: DigitalOcean App Platform deployment
         if: ${{ (needs.import_data.outputs.new_data == 'true' && github.event_name == 'schedule') || github.event_name == 'push' }}
         uses: digitalocean/app_action@v1.1.5
