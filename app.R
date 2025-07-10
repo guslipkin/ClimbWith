@@ -4,5 +4,5 @@
 
 source('data-raw/internal-data.R')
 pkgload::load_all(export_all = FALSE,helpers = FALSE,attach_testthat = FALSE)
-options( "golem.app.prod" = TRUE)
+options("golem.app.prod" = TRUE, "shiny.sessionTimeout" = 0, "shiny.autoreload" = FALSE)
 ClimbWith::run_app() # add parameters here (if any)
