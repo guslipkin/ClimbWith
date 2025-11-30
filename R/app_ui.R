@@ -455,7 +455,12 @@ app_ui <- function(request) {
           )
         )
       ),
-      golem_add_external_resources()
+      golem_add_external_resources(),
+      htmltools::tags$footer(
+        id = 'healthcheck',
+        "ClimbWith is alive and well",
+        style = "display:none; position:fixed; bottom:0; width:100%;"
+      )
     )
     # footer = bs4Dash::dashboardFooter(
     #   left = shiny::div(
