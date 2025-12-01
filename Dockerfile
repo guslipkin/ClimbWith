@@ -9,4 +9,4 @@ RUN R -e 'install.packages("renv", repos = "https://packagemanager.posit.co/cran
 RUN R -e 'renv::restore(prompt = FALSE)'
 RUN R -e 'renv::install(".", prompt = FALSE)'
 EXPOSE 80
-CMD R -e "shiny::runApp('.', port = 80, host = '0.0.0.0')"
+CMD R -e "options('shiny.port'=80,shiny.host='0.0.0.0');ClimbWith::run_app();"
